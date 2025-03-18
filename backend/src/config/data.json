@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "description": "Arroz blanco grano largo 1kg",
+    "category": "Granos y Cereales",
+    "articleCode": 101,
+    "barcode": "1234567890123",
+    "stock": 100
+  },
+  {
+    "id": 2,
+    "description": "Frijol negro 500g",
+    "category": "Granos y Cereales",
+    "articleCode": 102,
+    "barcode": "2345678901234",
+    "stock": 50
+  },
+  {
+    "id": 3,
+    "description": "Lata de atún en agua 150g",
+    "category": "Enlatados",
+    "articleCode": 201,
+    "barcode": "3456789012345",
+    "stock": 200
+  },
+  {
+    "id": 4,
+    "description": "Salsa de tomate 200g",
+    "category": "Enlatados",
+    "articleCode": 202,
+    "barcode": "4567890123456",
+    "stock": 150
+  },
+  {
+    "id": 5,
+    "description": "Aceite de oliva 500ml",
+    "category": "Aceites y Condimentos",
+    "articleCode": 301,
+    "barcode": "5678901234567",
+    "stock": 75
+  },
+  {
+    "id": 6,
+    "description": "Vinagre blanco 1L",
+    "category": "Aceites y Condimentos",
+    "articleCode": 302,
+    "barcode": "6789012345678",
+    "stock": 120
+  },
+  {
+    "id": 7,
+    "description": "Lentejas 500g",
+    "category": "Granos y Cereales",
+    "articleCode": 103,
+    "barcode": "7890123456789",
+    "stock": 80
+  },
+  {
+    "id": 8,
+    "description": "Chícharos en lata 300g",
+    "category": "Enlatados",
+    "articleCode": 203,
+    "barcode": "8901234567890",
+    "stock": 90
+  },
+  {
+    "id": 9,
+    "description": "Sal de mesa 1kg",
+    "category": "Aceites y Condimentos",
+    "articleCode": 303,
+    "barcode": "9012345678901",
+    "stock": 110
+  },
+  {
+    "id": 10,
+    "description": "Garbanzo 500g",
+    "category": "Granos y Cereales",
+    "articleCode": 104,
+    "barcode": "0123456789012",
+    "stock": 60
+  }
+]
