@@ -24,20 +24,16 @@ const router = useRouter();
 
 const register = async () => {
   try {
-    await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value,
-    );
+    await signInWithEmailAndPassword(auth, email.value, password.value);
     console.log("Inicio de sesión con Email exitoso");
     router.push("/pos");
   } catch (error) {
     switch (error.code) {
       case "auth/invalid-email":
-        errMsg.value = "Correo inválido"
+        errMsg.value = "Correo inválido";
         break;
       default:
-        errMsg.value = "Correo o contraseña incorrectas"
+        errMsg.value = "Correo o contraseña incorrectas";
         break;
     }
   }
@@ -52,10 +48,10 @@ const signInWithGoogle = async () => {
   } catch (error) {
     switch (error.code) {
       case "auth/invalid-email":
-        errMsg.value = "Correo inválido"
+        errMsg.value = "Correo inválido";
         break;
       default:
-        errMsg.value = "Correo o contraseña incorrectas"
+        errMsg.value = "Correo o contraseña incorrectas";
         break;
     }
   }

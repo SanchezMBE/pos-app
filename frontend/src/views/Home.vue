@@ -1,5 +1,5 @@
 <template>
-  <h1>Bienvenido</h1>
+  <h1>Bienvenido {{ auth.currentUser.displayName ?? auth.currentUser.email }}</h1>
   <button @click="handleSignOut">Cerrar sesión</button>
 </template>
 
