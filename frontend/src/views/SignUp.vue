@@ -50,11 +50,14 @@ const register = async () => {
       case "auth/invalid-email":
         errMsg.value = "Correo inválido";
         break;
+      case "auth/missing-password":
+          errMsg.value = "Ingresa la contraseña";
+          break;
       case "auth/weak-password":
         errMsg.value = "Contraseña débil";
         break;
       default:
-        errMsg.value = error.code;
+        errMsg.value = "Correo o contraseña incorrectas";
         break;
     }
   }
@@ -68,6 +71,7 @@ const signInWithGoogle = async () => {
     router.push("/pos");
   } catch (error) {
     console.log("Algo salió mal al iniciar sesión con Google");
+    errMsg.value = "Algo salió mal al iniciar sesión con Google";
   }
 };
 
