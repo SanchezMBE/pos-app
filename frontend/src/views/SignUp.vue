@@ -54,7 +54,10 @@ const register = async () => {
           errMsg.value = "Ingresa la contraseña";
           break;
       case "auth/weak-password":
-        errMsg.value = "Contraseña débil";
+        errMsg.value = "Contraseña débil debe tener mínimo 6 caractéres";
+        break;
+      case "auth/too-many-requests":
+        errMsg.value = "La cantidad de solicitudes supera el máximo permitido";
         break;
       default:
         errMsg.value = "Correo o contraseña incorrectas";

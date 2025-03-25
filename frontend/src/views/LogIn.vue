@@ -68,6 +68,9 @@ const register = async () => {
       case "auth/missing-password":
         errMsg.value = "Ingresa la contraseña";
         break;
+      case "auth/too-many-requests":
+        errMsg.value = "La cantidad de solicitudes supera el máximo permitido";
+        break;
       default:
         errMsg.value = "Correo o contraseña incorrectas";
         break;

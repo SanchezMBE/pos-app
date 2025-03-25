@@ -17,7 +17,7 @@ const router = createRouter({
   ],
 });
 
-const getCurrentUser   = () => {
+const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
     const removeListener = onAuthStateChanged(
       getAuth(),
