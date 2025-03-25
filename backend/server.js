@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-import adminArticleRoutes from "./src/routes/admin/articleRoutes.js";
+import adminArticleRoutes from "./src/routes/admin/article.js";
 // import casherArticleRoutes from "./routes/casher/articleRoutes.js";
 
 dotenv.config();
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: (origin, callback) => {
-      const ACCEPTED_ORIGINS = ["http://localhost:8080"];
+      const ACCEPTED_ORIGINS = ["http://localhost:5173"];
 
       if (ACCEPTED_ORIGINS.includes(origin)) {
         return callback(null, true);
