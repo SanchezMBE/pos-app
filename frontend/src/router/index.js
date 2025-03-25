@@ -7,9 +7,13 @@ const router = createRouter({
     { path: "/", component: () => import("../views/LandingPage.vue") },
     { path: "/signup", component: () => import("../views/SignUp.vue") },
     { path: "/login", component: () => import("../views/LogIn.vue") },
+    { path: "/articles", component: () => import("../views/Articles.vue") },
     {
       path: "/pos",
-      component: () => import("../views/Home.vue"),
+      component: () => import("../views/Home.vue"), 
+      // children: [
+      //   { path: "/articles", component: () => import("../views/Articles.vue")},
+      // ],
       meta: {
         requiresAuth: true,
       },
