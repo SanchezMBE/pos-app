@@ -1,119 +1,76 @@
-<template>
-    <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-            <div class="table-responsive">
-                <DataTable :data="products" :columns="columns" class="table table-striped table-bordered display"
-                :options="{
-                    responsive: true,
-                    autoWidth: false,
-                    dom: 'Bfrtip',
-                    language: {
-                        search: 'Buscar:',
-                        zeroRecords: 'No hay registros',
-                        info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-                        infoEmpty: 'Mostrando del _START_ a _END_ de _TOTAL_ registros',
-                        infoFiltered: '(filtrado de _MAX_ registros totales)',
-                        paginate: {
-                            first: 'Primero',
-                            last: 'Último',
-                            next: 'Siguiente',
-                            previous: 'Anterior'
-                        }
-                    },
-                    buttons: this.botones
-                }">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                </DataTable>
-            </div>
-        </div>
-    </div>
-</template>
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net-bs5";
+import "datatables.net-bs5";
+import "bootstrap";
 
-<script>
-import axios from 'axios';
-import DataTable from 'datatables.net-vue3';
-import DataTableLib from 'datatables.net-bs5';
-import Buttons from 'datatables.net-buttons-bs5';
-import ButtonsHtml5 from 'datatables.net-buttons/js/buttons.html5';
-import print from 'datatables.net-buttons/js/buttons.print';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-import 'datatables.net-responsive-bs5';
-import JsZip from 'jszip';
+DataTable.use(DataTablesCore);
 
-window.JSZip = JsZip;
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const data = ref([]); // Aquí se guarda la data
 
-DataTable.use(DataTableLib);
-DataTable.use(Buttons);
-DataTable.use(ButtonsHtml5);
-DataTable.use(print);
-DataTable.use(pdfMake);
+const columns = [
+  { data: "description" },
+  { data: "category" },
+  { data: "code" },
+  { data: "barcode" },
+  { data: "price" },
+  { data: "cost" },
+  { data: "stock" },
+];
 
-export default {
-    components: {
-        DataTable
-    },
-    data() {
-        return {
-            products: [],
-            columns: [
-                { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}`; } },
-                { data: 'name' },
-                { data: 'description' },
-                { data: 'price' },
-                { data: 'stock' },
-            ],
-            botones: [
-                {
-                    title: 'Reporte de Productos',
-                    extend: 'excelHtml5',
-                    text: '<i class="fa-solid fa-file-excel"></i> Excel',
-                    className: 'btn btn-success',
-                },
-                {
-                    title: 'Reporte de Productos',
-                    extend: 'pdfHtml5',
-                    text: '<i class="fa-solid fa-file-pdf"></i> PDF',
-                    className: 'btn btn-danger', 
-                },
-                {
-                    title: 'Reporte de Productos',
-                    extend: 'csvHtml5',
-                    text: '<i class="fa-solid fa-file-csv"></i> CSV',
-                    className: 'btn btn-info',
-                },
-                {
-                    title: 'Reporte de Productos',
-                    extend: 'print',
-                    text: '<i class="fa-solid fa-print"></i> Imprimir',
-                    className: 'btn btn-primary',
-                }
-            ]
-        };
-    },
-    mounted() {
-        this.getProducts();
-    },
-    methods: {
-        getProducts() {
-            axios.get('http://laraproducts.run/api/products')
-            .then(response => {
-                this.products = response.data;
-            })
-            .catch(error => {
-                console.log("Error al obtener productos:", error);
-            });
-        }
-    }
-};
+onMounted(async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:8080/api/admin/articles",
+    );
+    data.value = response.data; // Asegúrate de que la respuesta tenga el array de objetos
+  } catch (error) {
+    console.error("Error al cargar artículos:", error);
+    data.value = [
+      {
+        description: "Tortillas",
+        category: "Abarrotes",
+        code: "1",
+        barcode: "7501234567890",
+        price: 199.99,
+        cost: 120.0,
+        stock: 25,
+      },
+      {
+        description: "Teclado mecánico",
+        category: "Periféricos",
+        code: "T456",
+        barcode: "7509876543210",
+        price: 499.99,
+        cost: 300.0,
+        stock: 10,
+      },
+    ];
+  }
+});
 </script>
+
+<template>
+  <div class="container">
+    <DataTable
+      :data="data"
+      :columns="columns"
+      class="table table-hover table-striped"
+      width="100%"
+    >
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Código</th>
+          <th>Código de barras</th>
+          <th>Precio</th>
+          <th>Costo</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+    </DataTable>
+  </div>
+</template>
