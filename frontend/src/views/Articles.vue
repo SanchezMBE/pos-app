@@ -23,9 +23,9 @@ const columns = [
 onMounted(async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/admin/articles",
+      "http://localhost:3000/api/admin/articles",
     );
-    data.value = response.data; // Asegúrate de que la respuesta tenga el array de objetos
+    data.value = response.data.data; // Asegúrate de que la respuesta tenga el array de objetos
   } catch (error) {
     console.error("Error al cargar artículos:", error);
     data.value = [
