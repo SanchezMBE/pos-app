@@ -28,32 +28,13 @@ onMounted(async () => {
     data.value = response.data.data; // Asegúrate de que la respuesta tenga el array de objetos
   } catch (error) {
     console.error("Error al cargar artículos:", error);
-    data.value = [
-      {
-        description: "Tortillas",
-        category: "Abarrotes",
-        code: "1",
-        barcode: "7501234567890",
-        price: 199.99,
-        cost: 120.0,
-        stock: 25,
-      },
-      {
-        description: "Teclado mecánico",
-        category: "Periféricos",
-        code: "T456",
-        barcode: "7509876543210",
-        price: 499.99,
-        cost: 300.0,
-        stock: 10,
-      },
-    ];
   }
 });
 </script>
 
 <template>
   <div class="container">
+    <h1>Artículos</h1>
     <DataTable
       :data="data"
       :columns="columns"
