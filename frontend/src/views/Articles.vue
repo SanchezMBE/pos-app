@@ -8,7 +8,7 @@ import "bootstrap";
 
 DataTable.use(DataTablesCore);
 
-const data = ref([]); // Aquí se guarda la data
+const data = ref([]);
 
 const columns = [
   { data: "description" },
@@ -25,7 +25,7 @@ onMounted(async () => {
     const response = await axios.get(
       "http://localhost:3000/api/admin/articles",
     );
-    data.value = response.data.data; // Asegúrate de que la respuesta tenga el array de objetos
+    data.value = response.data;
   } catch (error) {
     console.error("Error al cargar artículos:", error);
   }
