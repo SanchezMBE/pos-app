@@ -336,7 +336,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 const auth = getAuth();
 const router = useRouter();
 const db = getFirestore();
-const userRole = ref("Cargando...");
+const userRole = ref("Administrador"); // Valor por defecto para el rol de usuario
 
 // Datos de ejemplo para la tabla de productos
 const topProducts = [
@@ -382,13 +382,13 @@ onMounted(async () => {
     // Obtener el rol del usuario desde Firestore
     const userDoc = await getDoc(doc(db, "usuarios", auth.currentUser.uid));
     if (userDoc.exists()) {
-      userRole.value = userDoc.data().rol || "Administrador";
+      userRole.value = userDoc.data().rol || "";
     } else {
-      userRole.value = "Administrador";
+      userRole.value = "";
     }
   } catch (error) {
     console.error("Error al cargar el rol del usuario:", error);
-    userRole.value = "Administrador";
+    userRole.value = "";
   }
 });
 
