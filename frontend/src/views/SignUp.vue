@@ -151,7 +151,9 @@
               <div class="mt-4 text-center">
                 <p class="mb-0">
                   ¿Ya tienes una cuenta?
-                  <a href="/login" class="text-decoration-none fw-semibold text-decoration-underline"
+                  <a
+                    href="/login"
+                    class="text-decoration-none fw-semibold text-decoration-underline"
                     >Inicia sesión</a
                   >
                 </p>

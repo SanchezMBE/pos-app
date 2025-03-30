@@ -65,7 +65,9 @@
               <div class="mb-4">
                 <div class="d-flex justify-content-between">
                   <label for="password" class="form-label">Contraseña</label>
-                  <a href="#" class="text-decoration-none small text-decoration-underline"
+                  <a
+                    href="#"
+                    class="text-decoration-none small text-decoration-underline"
                     >¿Olvidaste tu contraseña?</a
                   >
                 </div>
@@ -130,7 +132,9 @@
               <div class="mt-4 text-center">
                 <p class="mb-0">
                   ¿No tienes una cuenta?
-                  <a href="/signup" class="text-decoration-none fw-semibold text-decoration-underline"
+                  <a
+                    href="/signup"
+                    class="text-decoration-none fw-semibold text-decoration-underline"
                     >Regístrate</a
                   >
                 </p>
