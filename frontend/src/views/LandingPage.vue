@@ -56,7 +56,7 @@
           </div>
           <div class="col-lg-6 text-center mb-4 mb-lg-0">
             <img
-              src="../assets/Hero.png"
+              src="../assets/hero.png"
               alt="Punto de Venta Logo"
               class="img-fluid mx-auto d-block"
               style="max-height: 500px"
