@@ -3,25 +3,25 @@
     <div class="row g-0 h-100">
       <!-- Panel lateral con imagen y mensaje -->
       <div class="col-lg-6 d-none d-lg-block bg-primary text-white">
-        <div class="d-flex flex-column justify-content-center h-100 p-5">
-          <h2 class="display-6 fw-bold mb-4">Retail-Insight</h2>
-          <p class="fs-5 mb-4">Transforma tus datos operativos en decisiones estratégicas con nuestra plataforma de análisis inteligente.</p>
-          <div class="features mt-4">
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-check-circle-fill me-3 fs-4"></i>
-              <span>Análisis automatizado con IA generativa</span>
-            </div>
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-check-circle-fill me-3 fs-4"></i>
-              <span>Visualizaciones interactivas de datos</span>
-            </div>
-            <div class="d-flex align-items-center">
-              <i class="bi bi-check-circle-fill me-3 fs-4"></i>
-              <span>Recomendaciones estratégicas personalizadas</span>
-            </div>
-          </div>
-        </div>
+  <div class="d-flex flex-column justify-content-center h-100 p-5">
+    <h2 class="display-6 fw-bold mb-4">StorePOS</h2>
+    <p class="fs-5 mb-4">Optimiza la gestión de tu tienda de abarrotes con nuestro sistema integral de punto de venta.</p>
+    <div class="features mt-4">
+      <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+        <span>Control de inventario en tiempo real</span>
       </div>
+      <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+        <span>Gestión eficiente de ventas y transacciones</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+        <span>Corte de caja automatizado y reportes detallados</span>
+      </div>
+    </div>
+  </div>
+</div>
       
       <!-- Formulario de login -->
       <div class="col-lg-6 bg-white">
