@@ -2,9 +2,17 @@
   <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
     <div class="bg-dark text-white border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading py-4 px-3">
-        <h4 class="mb-0 fw-bold">Store POS</h4>
-        <small>Control de Ventas</small>
+      <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
+        <img
+          src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico"
+          alt="Retail-Insight Logo"
+          class="img-fluid me-3"
+          style="max-height: 60px"
+        />
+        <div>
+          <h4 class="mb-0 fw-bold">Store POS</h4>
+          <small>Control de Ventas</small>
+        </div>
       </div>
 
       <div class="list-group list-group-flush">
