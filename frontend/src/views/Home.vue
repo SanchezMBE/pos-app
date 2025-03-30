@@ -3,12 +3,14 @@
     <!-- Sidebar -->
     <div class="bg-dark text-white border-right" id="sidebar-wrapper">
       <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
-        <img
-          src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico"
-          alt="Retail-Insight Logo"
-          class="img-fluid me-3"
-          style="max-height: 60px"
-        />
+        <a href="/pos">
+          <img
+            src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico"
+            alt="Retail-Insight Logo"
+            class="img-fluid me-3"
+            style="max-height: 60px"
+          />
+        </a>
         <div>
           <h4 class="mb-0 fw-bold">Store POS</h4>
           <small>Control de Ventas</small>
@@ -41,11 +43,6 @@
           </router-link>
 
           <router-link
-            to="/corte-caja"
-            class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-          >
-            <i class="bi bi-receipt-cutoff me-2"></i> Corte de Caja </router-link
-          ><router-link
             to="/corte-caja"
             class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
           >
@@ -387,11 +384,11 @@ onMounted(async () => {
     if (userDoc.exists()) {
       userRole.value = userDoc.data().rol || "Administrador";
     } else {
-      userRole.value = "Administrador"; // Rol por defecto
+      userRole.value = "Administrador";
     }
   } catch (error) {
     console.error("Error al cargar el rol del usuario:", error);
-    userRole.value = "Administrador"; // Rol por defecto en caso de error
+    userRole.value = "Administrador";
   }
 });
 
