@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container vh-100">
     <div class="row g-0 h-100">
       <!-- Panel lateral con imagen y mensaje -->
       <div class="col-lg-6 d-none d-lg-block bg-primary text-white">
@@ -34,7 +34,11 @@
           <div class="text-center mb-4">
             <a href="/">
               <img
+<<<<<<< HEAD
                 src="/favicon.ico"
+=======
+                src="../assets/favicon.ico"
+>>>>>>> 277a552d4e1470ae307aef6613be9ef390ea8f41
                 alt="Retail-Insight Logo"
                 class="img-fluid mb-4"
                 style="max-height: 60px"
@@ -65,7 +69,13 @@
               <div class="mb-4">
                 <div class="d-flex justify-content-between">
                   <label for="password" class="form-label">Contraseña</label>
+<<<<<<< HEAD
                   <a href="#" class="text-decoration-none small"
+=======
+                  <a
+                    href="#"
+                    class="text-decoration-none small text-decoration-underline"
+>>>>>>> 277a552d4e1470ae307aef6613be9ef390ea8f41
                     >¿Olvidaste tu contraseña?</a
                   >
                 </div>
@@ -130,7 +140,13 @@
               <div class="mt-4 text-center">
                 <p class="mb-0">
                   ¿No tienes una cuenta?
+<<<<<<< HEAD
                   <a href="/signup" class="text-decoration-none fw-semibold"
+=======
+                  <a
+                    href="/signup"
+                    class="text-decoration-none fw-semibold text-decoration-underline"
+>>>>>>> 277a552d4e1470ae307aef6613be9ef390ea8f41
                     >Regístrate</a
                   >
                 </p>
@@ -173,7 +189,7 @@ const register = async () => {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
     console.log("Inicio de sesión con Email exitoso");
-    router.push("/dashboard");
+    router.push("/pos");
   } catch (error) {
     switch (error.code) {
       case "auth/invalid-email":

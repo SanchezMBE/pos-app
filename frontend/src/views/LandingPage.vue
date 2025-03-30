@@ -1,17 +1,14 @@
 <template>
   <header>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
   </header>
   <div>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div class="container">
-        <img
-          src="D:\pos-app\pos-app\frontend\public\favicon.ico"
-          alt="Logo de StorePOS"
+        <img 
+          src="D:\pos-app\pos-app\frontend\public\favicon.ico" 
+          alt="Logo de StorePOS" 
           class="img-fluid mx-auto d-block"
           link="#"
           style="max-height: 40px"
@@ -57,19 +54,14 @@
             </p>
             <div class="d-flex gap-3">
               <router-link to="/signup" class="btn btn-light btn-lg px-4">
-                Comenzar Ahora
+                Comenzar Gratis
               </router-link>
-              <!--
-              <router-link to="/demo" class="btn btn-outline-light btn-lg px-4">
-                Ver Demo
-              </router-link>
-              -->
             </div>
           </div>
           <div class="col-lg-6 text-center mb-4 mb-lg-0">
-            <img
-              src="D:\pos-app\pos-app\frontend\public\Hero.png"
-              alt="Sistema de Punto de Venta"
+            <img 
+              src="D:\pos-app\pos-app\frontend\public\Hero.png" 
+              alt="Sistema de Punto de Venta" 
               class="img-fluid mx-auto d-block"
               style="max-height: 500px"
             />
@@ -81,7 +73,6 @@
     <!-- Features Section -->
     <section class="py-5">
       <div class="container">
-        <h2 class="text-center mb-5">Funcionalidades Principales</h2>
         <div class="row text-center">
           <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm">
@@ -238,26 +229,21 @@
               <div class="card-body">
                 <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
                 <h4>Mayor Seguridad</h4>
-                <p>
-                  Sistema de roles que protege la información sensible de tu
-                  negocio.
-                </p>
+                <p>Sistema de roles que protege la información sensible de tu negocio.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-
+  
     <!-- Technologies Section -->
     <section class="bg-light py-5">
       <div class="container">
         <h2 class="text-center mb-5">Tecnologías que Utilizamos</h2>
         <div class="row justify-content-center text-center">
           <div class="col-6 col-md-2 mb-4">
-            <div
-              class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center"
-            >
+            <div class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
               <div>
                 <i class="bi bi-filetype-js fs-1 text-primary"></i>
                 <p class="mb-0 mt-2">Node.js</p>
@@ -265,9 +251,7 @@
             </div>
           </div>
           <div class="col-6 col-md-2 mb-4">
-            <div
-              class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center"
-            >
+            <div class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
               <div>
                 <i class="bi bi-database fs-1 text-primary"></i>
                 <p class="mb-0 mt-2">MySQL</p>
@@ -275,9 +259,7 @@
             </div>
           </div>
           <div class="col-6 col-md-2 mb-4">
-            <div
-              class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center"
-            >
+            <div class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
               <div>
                 <i class="bi bi-server fs-1 text-primary"></i>
                 <p class="mb-0 mt-2">Supabase</p>
@@ -285,9 +267,7 @@
             </div>
           </div>
           <div class="col-6 col-md-2 mb-4">
-            <div
-              class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center"
-            >
+            <div class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
               <div>
                 <i class="bi bi-code-slash fs-1 text-primary"></i>
                 <p class="mb-0 mt-2">Vite</p>
@@ -295,9 +275,7 @@
             </div>
           </div>
           <div class="col-6 col-md-2 mb-4">
-            <div
-              class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center"
-            >
+            <div class="bg-white p-3 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
               <div>
                 <i class="bi bi-vue fs-1 text-primary"></i>
                 <p class="mb-0 mt-2">Vue.js</p>
@@ -309,14 +287,14 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="py-5 bg-primary text-white">
+    <section class="bg-light py-5">
       <div class="container text-center">
         <h2 class="mb-4">¿Listo para Optimizar la Gestión de tu Tienda?</h2>
         <p class="lead mb-4">
           Registra tu negocio hoy y mejora la eficiencia de tu punto de venta.
         </p>
         <div class="d-flex justify-content-center gap-3">
-          <router-link to="/signup" class="btn btn-light btn-lg px-4">
+          <router-link to="/signup" class="btn btn-primary btn-lg px-4">
             Comenzar Ahora
           </router-link>
           <!--

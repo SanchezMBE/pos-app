@@ -1,5 +1,5 @@
 <template>
-  <div class="register-container">
+  <div class="register-container vh-100">
     <div class="row g-0 h-100">
       <!-- Panel lateral con imagen y mensaje -->
       <div class="col-lg-6 d-none d-lg-block bg-primary text-white">
@@ -36,7 +36,11 @@
           <div class="text-center mb-4">
             <a href="/">
               <img
+<<<<<<< HEAD
                 src="/favicon.ico"
+=======
+                src="../assets/favicon.ico"
+>>>>>>> 277a552d4e1470ae307aef6613be9ef390ea8f41
                 alt="Retail-Insight Logo"
                 class="img-fluid mb-4"
                 style="max-height: 60px"
@@ -151,7 +155,13 @@
               <div class="mt-4 text-center">
                 <p class="mb-0">
                   ¿Ya tienes una cuenta?
+<<<<<<< HEAD
                   <a href="/login" class="text-decoration-none fw-semibold"
+=======
+                  <a
+                    href="/login"
+                    class="text-decoration-none fw-semibold text-decoration-underline"
+>>>>>>> 277a552d4e1470ae307aef6613be9ef390ea8f41
                     >Inicia sesión</a
                   >
                 </p>
@@ -207,7 +217,7 @@ const register = async () => {
   try {
     await createUserWithEmailAndPassword(auth, email.value, password.value);
     console.log("Registro exitoso");
-    router.push("/dashboard");
+    router.push("/pos");
   } catch (error) {
     console.error("Error de registro:", error.code);
     switch (error.code) {
@@ -236,7 +246,7 @@ const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
     console.log("Registro con Google exitoso");
-    router.push("/dashboard");
+    router.push("/pos");
   } catch (error) {
     console.error("Error de registro con Google:", error);
     if (error.code === "auth/popup-closed-by-user") {

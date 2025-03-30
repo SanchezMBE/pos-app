@@ -34,6 +34,7 @@ onMounted(async () => {
 
 <template>
   <div class="container">
+    <h1>Artículos</h1>
     <DataTable
       :data="data"
       :columns="columns"
