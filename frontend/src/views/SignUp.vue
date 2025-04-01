@@ -36,7 +36,7 @@
           <div class="text-center mb-4">
             <a href="/">
               <img
-                src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico"
+                src="../assets/favicon.ico"
                 alt="Retail-Insight Logo"
                 class="img-fluid mb-4"
                 style="max-height: 60px"

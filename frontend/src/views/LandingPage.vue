@@ -7,7 +7,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div class="container">
         <img 
-          src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico" 
+          src="../assets/favicon.ico" 
           alt="Logo de StorePOS" 
           class="img-fluid mx-auto d-block"
           link="#"
@@ -60,7 +60,7 @@
           </div>
           <div class="col-lg-6 text-center mb-4 mb-lg-0">
             <img 
-              src="D:\pos-app\pos-app\frontend\src\assets\Hero.png" 
+              src="../assets/hero.png" 
               alt="Sistema de Punto de Venta" 
               class="img-fluid mx-auto d-block"
               style="max-height: 500px"
