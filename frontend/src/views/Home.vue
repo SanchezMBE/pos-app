@@ -5,7 +5,7 @@
       <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
         <a href="/pos">
           <img
-            src="../assets/favicon.i"
+            src="../assets/favicon.ico"
             alt="Retail-Insight Logo"
             class="img-fluid me-3"
             style="max-height: 60px"
