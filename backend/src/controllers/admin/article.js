@@ -2,91 +2,121 @@ import { Article } from "../../models/article.js";
 
 export class ArticleController {
   static async getAll(req, res) {
-    const articles = await Article.getAll();
-    res.status(200).json({ data: articles });
+    try {
+      // Get the business_id from the authenticated user
+      const businessId = req.user.business_id;
+      
+      const articles = await Article.findAll(businessId);
+      return res.status(200).json({
+        success: true,
+        data: articles
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 
   static async getById(req, res) {
-    const { id } = req.params;
-
-    const article = await Article.getById({ id });
-    if (article) return res.status(200).json({ data: article });
-    res.status(404).json({ message: "Artículo no encontrado" });
+    try {
+      const { id } = req.params;
+      const businessId = req.user.business_id;
+      
+      const article = await Article.findById(id, businessId);
+      
+      if (!article) {
+        return res.status(404).json({
+          success: false,
+          message: 'Article not found'
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        data: article
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 
   static async create(req, res) {
-    const { description, category, code, barcode, price, cost, stock } =
-      req.body;
-    const newArticle = await Article.create({
-      description,
-      category,
-      code,
-      barcode,
-      price,
-      cost,
-      stock,
-    });
-
-    return res.status(201).json({ data: newArticle });
+    try {
+      // Add the business_id from the authenticated user
+      const articleData = {
+        ...req.body,
+      };
+      
+      const newArticle = await Article.create(articleData);
+      
+      return res.status(201).json({
+        success: true,
+        data: newArticle,
+        message: 'Article created successfully'
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 
   static async update(req, res) {
     try {
       const { id } = req.params;
-      const { description, category, code, barcode, price, cost, stock } =
-        req.body;
-
-      const updatedArticle = await Article.update({
-        id,
-        description,
-        category,
-        code,
-        barcode,
-        price,
-        cost,
-        stock,
-      });
-
+      const businessId = req.user.business_id;
+      
+      const updatedArticle = await Article.update(id, req.body, businessId);
+      
       if (!updatedArticle) {
-        return res.status(404).json({ message: "Artículo no encontrado" });
+        return res.status(404).json({
+          success: false,
+          message: 'Article not found or does not belong to your business'
+        });
       }
-
-      return res
-        .status(200)
-        .json({
-          data: updatedArticle,
-          message: "Artículo actualizado correctamente",
-        });
+      
+      return res.status(200).json({
+        success: true,
+        data: updatedArticle,
+        message: 'Article updated successfully'
+      });
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: "Error al actualizar el artículo",
-          error: error.message,
-        });
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
     }
   }
 
   static async delete(req, res) {
     try {
       const { id } = req.params;
-
-      const deleted = await Article.delete({ id });
-
+      const businessId = req.user.business_id;
+      
+      const deleted = await Article.delete(id, businessId);
+      
       if (!deleted) {
-        return res.status(404).json({ message: "Artículo no encontrado" });
-      }
-
-      return res
-        .status(200)
-        .json({ message: "Artículo eliminado correctamente" });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: "Error al eliminar el artículo",
-          error: error.message,
+        return res.status(404).json({
+          success: false,
+          message: 'Article not found or does not belong to your business'
         });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Article deleted successfully'
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
     }
   }
 }
