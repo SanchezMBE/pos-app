@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(corsMiddleware());
 
-app.use("/api/", authRoutes);
+app.use("/api", authRoutes);
 
 app.use("/api/admin/articles", adminArticleRoutes);
 // app.use("/api/cashers", casherArticleRoutes);

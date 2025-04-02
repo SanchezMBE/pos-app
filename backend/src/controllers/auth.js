@@ -1,61 +1,126 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import db from "../config/database.js";
+import { User } from "../models/user.js";
+import { Business } from "../models/business.js";
 
 export class AuthController {
   static async signup(req, res) {
-    const { username, password, full_name, business_id, role } = req.body;
-  
     try {
-      // Verificar si el usuario ya existe
-      const [existingUsers] = await db.query("SELECT * FROM user WHERE username = ?", [username]);
-      if (existingUsers.length > 0) {
-        return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
+      // Extract business and user details from the nested structure
+      const { business, user } = req.body;
+
+      console.log(user);
+
+      const { username, password, full_name } = user;
+      const { name, address, phone, email } = business;
+
+      // Verify if the username already exists
+      const existingUsers = await User.findByName({ username });
+      if (existingUsers) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid credentials",
+        });
       }
-  
-      // Hashear la contraseña con SHA-256
-      const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
-  
-      // Insertar nuevo usuario
-      const [result] = await db.query(
-        "INSERT INTO user (username, password, full_name, business_id, role) VALUES (?, ?, ?, ?, ?)",
-        [username, hashedPassword, full_name, business_id, role]
-      );
-    
-      // Responder con el usuario creado
-      res.status(201).json({ id: result.insertId, username, full_name, business_id, role });
+
+      const newBusiness = {
+        name,
+        address,
+        phone,
+        email,
+      };
+
+      // First, create the business record
+      const businessResult = await Business.create({
+        businessData: newBusiness,
+      });
+
+      const business_id = businessResult.id;
+
+      // Hash the password with SHA-256
+      const hashedPassword = crypto
+        .createHash("sha256")
+        .update(password)
+        .digest("hex");
+
+      const userRole = "admin";
+
+      // Create a new user admin with the business_id from the created business
+      const newUser = {
+        username,
+        password: hashedPassword,
+        full_name,
+        role: userRole,
+      };
+
+      const userResult = await User.create({
+        userData: newUser,
+        businessId: business_id,
+      });
+
+      res.status(201).json({
+        success: true,
+        data: {
+          business: {
+            name,
+            address,
+            phone,
+            email,
+          },
+          user: {
+            username,
+            full_name,
+            role: userRole,
+          },
+        },
+        message: "Business and user created successfully",
+      });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
   }
-  
+
   static async login(req, res) {
     const { username, password } = req.body;
 
     try {
-      const [users] = await db.query("SELECT * FROM user WHERE username = ?", [username]);
+      const user = await User.findByName({ username });
 
-      if (users.length === 0) {
-        return res.status(401).json({ error: "Credenciales inválidas" });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          error: "Invalid credentials",
+        });
       }
 
-      const user = users[0];
-      const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+      const hashedPassword = crypto
+        .createHash("sha256")
+        .update(password)
+        .digest("hex");
 
       if (user.password !== hashedPassword) {
-        return res.status(401).json({ error: "Credenciales inválidas" });
+        return res.status(401).json({
+          success: false,
+          error: "Invalid credentials",
+        });
       }
 
       // Creación del token JWT
       const token = jwt.sign(
         { id: user.id, business_id: user.business_id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "1h" },
       );
 
       res.json({ token });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
   }
 }

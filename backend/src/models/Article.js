@@ -1,7 +1,7 @@
-import db from '../config/database.js';
+import db from "../config/database.js";
 
 export class Article {
-  static async findAll(businessId) {
+  static async findAll({ businessId }) {
     try {
       const [articles] = await db.query(
         `SELECT a.*, c.name as category_name 
@@ -9,7 +9,7 @@ export class Article {
          JOIN category c ON a.category_id = c.id
          WHERE a.business_id = ?
          ORDER BY a.id DESC`,
-        [businessId]
+        [businessId],
       );
       return articles;
     } catch (error) {
@@ -17,16 +17,16 @@ export class Article {
     }
   }
 
-  static async findById(id, businessId) {
+  static async findById({ id, businessId }) {
     try {
       const [articles] = await db.query(
         `SELECT a.*, c.name as category_name 
          FROM article a
          JOIN category c ON a.category_id = c.id
          WHERE a.id = ? AND a.business_id = ?`,
-        [id, businessId]
+        [id, businessId],
       );
-      
+
       if (articles.length === 0) return null;
       return articles[0];
     } catch (error) {
@@ -34,63 +34,91 @@ export class Article {
     }
   }
 
-  static async create(articleData) {
+  static async create({ articleData, businessId }) {
     try {
-      const { business_id, category_id, description, code, barcode, price, cost, stock } = articleData;
-      
+      const {
+        category_id,
+        description,
+        code,
+        barcode,
+        price,
+        cost,
+        stock,
+      } = articleData;
+
       const [result] = await db.query(
         `INSERT INTO article 
          (business_id, category_id, description, code, barcode, price, cost, stock) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [business_id, category_id, description, code, barcode, price, cost, stock]
+        [
+          businessId,
+          category_id,
+          description,
+          code,
+          barcode,
+          price,
+          cost,
+          stock,
+        ],
       );
-      
+
       return { id: result.insertId, ...articleData };
     } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        if (error.message.includes('code')) {
-          throw new Error('Code already exists');
-        } else if (error.message.includes('barcode')) {
-          throw new Error('Barcode already exists');
+      if (error.code === "ER_DUP_ENTRY") {
+        if (error.message.includes("code")) {
+          throw new Error("Code already exists");
+        } else if (error.message.includes("barcode")) {
+          throw new Error("Barcode already exists");
         }
       }
       throw new Error(`Error creating article: ${error.message}`);
     }
   }
 
-  static async update(id, articleData, businessId) {
+  static async update({ id, articleData, businessId }) {
     try {
-      const { category_id, description, code, barcode, price, cost, stock } = articleData;
-      
+      const { category_id, description, code, barcode, price, cost, stock } =
+        articleData;
+
       const [result] = await db.query(
         `UPDATE article 
          SET category_id = ?, description = ?, code = ?, barcode = ?, 
              price = ?, cost = ?, stock = ?
          WHERE id = ? AND business_id = ?`,
-        [category_id, description, code, barcode, price, cost, stock, id, businessId]
+        [
+          category_id,
+          description,
+          code,
+          barcode,
+          price,
+          cost,
+          stock,
+          id,
+          businessId,
+        ],
       );
-      
+
       if (result.affectedRows === 0) return null;
       return { id, ...articleData };
     } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        if (error.message.includes('code')) {
-          throw new Error('Code already exists');
-        } else if (error.message.includes('barcode')) {
-          throw new Error('Barcode already exists');
+      if (error.code === "ER_DUP_ENTRY") {
+        if (error.message.includes("code")) {
+          throw new Error("Code already exists");
+        } else if (error.message.includes("barcode")) {
+          throw new Error("Barcode already exists");
         }
       }
       throw new Error(`Error updating article: ${error.message}`);
     }
   }
 
-  static async delete(id, businessId) {
+  static async delete({ id, businessId }) {
     try {
       const [result] = await db.query(
-        'DELETE FROM article WHERE id = ? AND business_id = ?',
-        [id, businessId]
+        "DELETE FROM article WHERE id = ? AND business_id = ?",
+        [id, businessId],
       );
-      
+
       return result.affectedRows > 0;
     } catch (error) {
       throw new Error(`Error deleting article: ${error.message}`);
