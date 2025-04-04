@@ -3,7 +3,7 @@ import db from "../config/database.js";
 export class User {
   static async findAll({ businessId }) {
     try {
-      const [users] = await db.query(
+      const [result] = await db.query(
         `SELECT a.*, c.name as category_name 
          FROM user a
          JOIN category c ON a.category_id = c.id
@@ -11,7 +11,7 @@ export class User {
          ORDER BY a.id DESC`,
         [businessId]
       );
-      return users;
+      return result;
     } catch (error) {
       throw new Error(`Error fetching users: ${error.message}`);
     }
@@ -19,10 +19,10 @@ export class User {
 
   static async findById({ id }) {
     try {
-      const [users] = await db.query("SELECT * FROM user WHERE id = ?", [id]);
+      const [result] = await db.query("SELECT * FROM user WHERE id = ?", [id]);
 
-      if (users.length === 0) return null;
-      return users[0];
+      if (result.length === 0) return null;
+      return result[0];
     } catch (error) {
       throw new Error(`Error fetching user: ${error.message}`);
     }
@@ -33,7 +33,6 @@ export class User {
       const [result] = await db.query("SELECT * FROM user WHERE username = ?", [username]);
 
       if (result.length === 0) return null;
-      console.log(result[0]);
 
       return result[0];
     } catch (error) {

@@ -21,4 +21,7 @@ router.get("/:id", ArticleController.getById);
 router.patch("/:id", validateMiddleware(articleSchema.partial()), ArticleController.update);
 router.delete("/:id", ArticleController.delete);
 
+router.get("/code/:code", ArticleController.getByCode);
+router.get("/barcode/:barcode", ArticleController.getByBarcode);
+
 export default router;

@@ -3,10 +3,10 @@ import { Article } from "../../models/article.js";
 export class ArticleController {
   static async getAll(req, res) {
     try {
-      // Get the business_id from the authenticated user
+      const { description } = req.query;
       const businessId = req.user.business_id;
 
-      const articles = await Article.findAll({ businessId });
+      const articles = await Article.findAll({ description, businessId });
       return res.status(200).json({
         success: true,
         data: articles
@@ -25,6 +25,58 @@ export class ArticleController {
       const businessId = req.user.business_id;
 
       const article = await Article.findById({ id, businessId });
+
+      if (!article) {
+        return res.status(404).json({
+          success: false,
+          message: "Article not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: article
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async getByCode(req, res) {
+    try {
+      const { code } = req.params;
+      const businessId = req.user.business_id;
+
+      const article = await Article.findByCode({ code, businessId });
+
+      if (!article) {
+        return res.status(404).json({
+          success: false,
+          message: "Article not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: article
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async getByBarcode(req, res) {
+    try {
+      const { barcode } = req.params;
+      const businessId = req.user.business_id;
+
+      const article = await Article.findByBarcode({ barcode, businessId });
 
       if (!article) {
         return res.status(404).json({

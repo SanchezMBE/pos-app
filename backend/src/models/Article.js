@@ -1,15 +1,17 @@
 import db from "../config/database.js";
 
 export class Article {
-  static async findAll({ businessId }) {
+  static async findAll({ description, businessId }) {
     try {
+      const descriptionParam = `%${description}%`;
       const [articles] = await db.query(
         `SELECT a.*, c.name as category_name 
          FROM article a
          JOIN category c ON a.category_id = c.id
-         WHERE a.business_id = ?
+         WHERE a.description LIKE ?
+         AND a.business_id = ?
          ORDER BY a.id DESC`,
-        [businessId]
+        [descriptionParam, businessId]
       );
       return articles;
     } catch (error) {
@@ -25,6 +27,40 @@ export class Article {
          JOIN category c ON a.category_id = c.id
          WHERE a.id = ? AND a.business_id = ?`,
         [id, businessId]
+      );
+
+      if (articles.length === 0) return null;
+      return articles[0];
+    } catch (error) {
+      throw new Error(`Error fetching article: ${error.message}`);
+    }
+  }
+
+  static async findByCode({ code, businessId }) {
+    try {
+      const [articles] = await db.query(
+        `SELECT a.*, c.name as category_name 
+         FROM article a
+         JOIN category c ON a.category_id = c.id
+         WHERE a.code = ? AND a.business_id = ?`,
+        [code, businessId]
+      );
+
+      if (articles.length === 0) return null;
+      return articles[0];
+    } catch (error) {
+      throw new Error(`Error fetching article: ${error.message}`);
+    }
+  }
+
+  static async findByBarcode({ barcode, businessId }) {
+    try {
+      const [articles] = await db.query(
+        `SELECT a.*, c.name as category_name 
+         FROM article a
+         JOIN category c ON a.category_id = c.id
+         WHERE a.barcode = ? AND a.business_id = ?`,
+        [barcode, businessId]
       );
 
       if (articles.length === 0) return null;
