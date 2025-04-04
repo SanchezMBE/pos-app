@@ -1,8 +1,10 @@
+ 
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
+import { corsMiddleware } from "./src/middlewares/corsMiddleware.js";
 
 import adminArticleRoutes from "./src/routes/admin/article.js";
+import authRoutes from "./src/routes/auth.js";
 // import casherArticleRoutes from "./routes/casher/articleRoutes.js";
 
 dotenv.config();
@@ -11,24 +13,14 @@ const app = express();
 
 app.disable("x-powered-by");
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      const ACCEPTED_ORIGINS = ["http://localhost:5173"];
-
-      if (ACCEPTED_ORIGINS.includes(origin)) {
-        return callback(null, true);
-      }
-
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-  }),
+  express.urlencoded({
+    extended: true
+  })
 );
+app.use(corsMiddleware());
+
+app.use("/api", authRoutes);
 
 app.use("/api/admin/articles", adminArticleRoutes);
 // app.use("/api/cashers", casherArticleRoutes);

@@ -7,7 +7,7 @@ const pool = mysql.createPool({
   user: process.env.DBUSER,
   port: process.env.DBPORT,
   password: process.env.DBPASS,
-  database: process.env.DBNAME,
+  database: process.env.DBNAME
 });
 
 (async () => {
