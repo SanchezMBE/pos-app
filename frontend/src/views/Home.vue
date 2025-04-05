@@ -279,7 +279,7 @@
         <!-- Productos - visible para ambos roles -->
         <div class="row mb-3">
           <div class="col-12">
-            <h2 class="fw-bold">Productos</h2>
+            <h2 class="fw-bold">Productos más vendidos:</h2>
           </div>
         </div>
 
