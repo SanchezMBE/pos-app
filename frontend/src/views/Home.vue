@@ -4,12 +4,7 @@
     <div class="bg-dark text-white border-right" id="sidebar-wrapper">
       <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
         <a href="/pos">
-          <img
-            src="../assets/favicon.ico"
-            alt="Retail-Insight Logo"
-            class="img-fluid me-3"
-            style="max-height: 60px"
-          />
+          <img src="../assets/favicon.ico" alt="Retail-Insight Logo" class="img-fluid me-3" style="max-height: 60px" />
         </a>
         <div>
           <h4 class="mb-0 fw-bold">Store POS</h4>
@@ -19,10 +14,7 @@
 
       <div class="list-group list-group-flush">
         <!-- Opciones para ambos roles -->
-        <router-link
-          to="/ventas"
-          class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-        >
+        <router-link to="/ventas" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
           <i class="bi bi-cart me-2"></i> Punto de Venta
         </router-link>
 
@@ -34,32 +26,20 @@
         </router-link>
 
         <!-- Opciones solo para administradores -->
-        <template v-if="userRole === 'Administrador'">
-          <router-link
-            to="/inventario"
-            class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-          >
+        <template v-if="user.role === 'admin'">
+          <router-link to="/inventario" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
             <i class="bi bi-box-seam me-2"></i> Inventario
           </router-link>
 
-          <router-link
-            to="/corte-caja"
-            class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-          >
+          <router-link to="/corte-caja" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
             <i class="bi bi-receipt-cutoff me-2"></i> Corte de Caja
           </router-link>
 
-          <router-link
-            to="/reportes"
-            class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-          >
+          <router-link to="/reportes" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
             <i class="bi bi-graph-up me-2"></i> Reportes
           </router-link>
 
-          <router-link
-            to="/usuarios"
-            class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-          >
+          <router-link to="/usuarios" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
             <i class="bi bi-people me-2"></i> Usuarios
           </router-link>
         </template>
@@ -75,8 +55,8 @@
             {{ getUserInitials() }}
           </div>
           <div class="flex-grow-1">
-            <div class="fw-bold">{{ getUserDisplayName() }}</div>
-            <small>{{ userRole }}</small>
+            <div class="fw-bold">{{ user.username }}</div>
+            <small>{{ user.role === "admin" ? "Administrador" : user.role === "cashier" ? "Cajero" : "" }}</small>
           </div>
           <button @click="handleSignOut" class="btn btn-sm btn-outline-light">
             <i class="bi bi-box-arrow-right"></i>
@@ -103,10 +83,7 @@
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10"
                   >
-                    <i
-                      class="bi bi-cart text-primary"
-                      style="font-size: 2rem"
-                    ></i>
+                    <i class="bi bi-cart text-primary" style="font-size: 2rem"></i>
                   </div>
                   <h5 class="card-title">Nueva Venta</h5>
                 </div>
@@ -114,20 +91,14 @@
             </router-link>
           </div>
 
-          <div
-            class="col-12 col-md-6 col-lg-3"
-            v-if="userRole === 'Administrador'"
-          >
+          <div class="col-12 col-md-6 col-lg-3" v-if="user.role === 'admin'">
             <router-link to="/inventario" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10"
                   >
-                    <i
-                      class="bi bi-box-seam text-success"
-                      style="font-size: 2rem"
-                    ></i>
+                    <i class="bi bi-box-seam text-success" style="font-size: 2rem"></i>
                   </div>
                   <h5 class="card-title">Administrar Inventario</h5>
                 </div>
@@ -142,10 +113,7 @@
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-info bg-opacity-10"
                   >
-                    <i
-                      class="bi bi-search text-info"
-                      style="font-size: 2rem"
-                    ></i>
+                    <i class="bi bi-search text-info" style="font-size: 2rem"></i>
                   </div>
                   <h5 class="card-title">Buscar Ventas</h5>
                 </div>
@@ -153,20 +121,14 @@
             </router-link>
           </div>
 
-          <div
-            class="col-12 col-md-6 col-lg-3"
-            v-if="userRole === 'Administrador'"
-          >
+          <div class="col-12 col-md-6 col-lg-3" v-if="user.role === 'admin'">
             <router-link to="/corte-caja" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10"
                   >
-                    <i
-                      class="bi bi-receipt-cutoff text-warning"
-                      style="font-size: 2rem"
-                    ></i>
+                    <i class="bi bi-receipt-cutoff text-warning" style="font-size: 2rem"></i>
                   </div>
                   <h5 class="card-title">Corte de Caja</h5>
                 </div>
@@ -176,7 +138,7 @@
         </div>
 
         <!-- Resumen para administradores -->
-        <template v-if="userRole === 'Administrador'">
+        <template v-if="user.role === 'admin'">
           <div class="row mb-3">
             <div class="col-12">
               <h2 class="fw-bold">Resumen del Negocio</h2>
@@ -200,9 +162,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                  <div class="text-muted small text-uppercase">
-                    Transacciones
-                  </div>
+                  <div class="text-muted small text-uppercase">Transacciones</div>
                   <div class="d-flex align-items-center mt-2">
                     <h3 class="mb-0 fw-bold">24</h3>
                   </div>
@@ -213,9 +173,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                  <div class="text-muted small text-uppercase">
-                    Productos Bajo Stock
-                  </div>
+                  <div class="text-muted small text-uppercase">Productos Bajo Stock</div>
                   <div class="d-flex align-items-center mt-2">
                     <h3 class="mb-0 fw-bold">5</h3>
                     <span class="badge bg-danger ms-2">Alerta</span>
@@ -227,9 +185,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                  <div class="text-muted small text-uppercase">
-                    Venta Promedio
-                  </div>
+                  <div class="text-muted small text-uppercase">Venta Promedio</div>
                   <div class="d-flex align-items-center mt-2">
                     <h3 class="mb-0 fw-bold">$52.08</h3>
                   </div>
@@ -263,9 +219,7 @@
             <div class="col-12 col-md-6">
               <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                  <div class="text-muted small text-uppercase">
-                    Mis ventas hoy
-                  </div>
+                  <div class="text-muted small text-uppercase">Mis ventas hoy</div>
                   <div class="d-flex align-items-center mt-2">
                     <h3 class="mb-0 fw-bold">12</h3>
                     <span class="ms-2 text-muted">Transacciones</span>
@@ -276,10 +230,10 @@
           </div>
         </template>
 
-        <!-- Productos - visible para ambos roles -->
+        <!-- Productos - visible para ambos roles --> // ESTO NO VA A ESTAS AQUÍ SINO EN INVENTARIO
         <div class="row mb-3">
           <div class="col-12">
-            <h2 class="fw-bold">Productos más vendidos:</h2>
+            <h2 class="fw-bold">Productos</h2>
           </div>
         </div>
 
@@ -293,24 +247,19 @@
                       <tr>
                         <th>Producto</th>
                         <th>Código</th>
+                        <th>Precio</th>
                         <th>Categoría</th>
-                        <th>Ventas</th>
                         <th>Stock</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(product, index) in topProducts" :key="index">
-                        <td>{{ product.name }}</td>
+                      <tr v-for="(product, index) in productsData" :key="index">
+                        <td>{{ product.description }}</td>
                         <td>{{ product.code }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>{{ product.sales }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.category_name }}</td>
                         <td>
-                          <span
-                            :class="
-                              'badge ' +
-                              (product.stock < 10 ? 'bg-danger' : 'bg-success')
-                            "
-                          >
+                          <span :class="'badge ' + (product.stock < 10 ? 'bg-danger' : 'bg-success')">
                             {{ product.stock }}
                           </span>
                         </td>
@@ -329,86 +278,53 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import axios from "axios";
 
-const auth = getAuth();
 const router = useRouter();
-const db = getFirestore();
-const userRole = ref("Administrador"); // Valor por defecto para el rol de usuario
-
-// Datos de ejemplo para la tabla de productos
-const topProducts = [
-  {
-    name: "Leche entera 1L",
-    code: "LC001",
-    category: "Lácteos",
-    sales: 45,
-    stock: 23,
-  },
-  {
-    name: "Pan blanco",
-    code: "PAN01",
-    category: "Panadería",
-    sales: 38,
-    stock: 15,
-  },
-  {
-    name: "Refresco Cola 2L",
-    code: "BEB023",
-    category: "Bebidas",
-    sales: 36,
-    stock: 42,
-  },
-  {
-    name: "Jabón de tocador",
-    code: "HG012",
-    category: "Higiene",
-    sales: 28,
-    stock: 18,
-  },
-  {
-    name: "Pasta dental",
-    code: "HG008",
-    category: "Higiene",
-    sales: 25,
-    stock: 7,
-  },
-];
+const user = ref({
+  username: "Usuario",
+  role: ""
+});
+const productsData = ref([]);
 
 onMounted(async () => {
-  try {
-    // Obtener el rol del usuario desde Firestore
-    const userDoc = await getDoc(doc(db, "usuarios", auth.currentUser.uid));
-    if (userDoc.exists()) {
-      userRole.value = userDoc.data().rol || "";
-    } else {
-      userRole.value = "";
+  const storedUser = localStorage.getItem("user");
+  const storedToken = localStorage.getItem("authToken");
+
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser);
+      // Configurar token para futuras peticiones
+    } catch (e) {
+      console.error("Error al parsear datos del usuario:", e);
     }
-  } catch (error) {
-    console.error("Error al cargar el rol del usuario:", error);
-    userRole.value = "";
   }
+  if (storedToken) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  }
+
+  await getProducts();
 });
 
-const getUserDisplayName = () => {
-  return auth.currentUser.displayName || auth.currentUser.email || "Usuario";
-};
-
 const getUserInitials = () => {
-  const name = auth.currentUser.displayName || auth.currentUser.email || "U";
+  const name = user.value.username || "U";
   return name.charAt(0).toUpperCase();
 };
 
+const getProducts = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/admin/articles");
+    if (response.data) {
+      productsData.value = response.data.data;
+    }
+  } catch (error) {}
+};
+
 const handleSignOut = () => {
-  signOut(auth)
-    .then(() => {
-      router.push("/");
-    })
-    .catch((error) => {
-      console.error("Error al cerrar sesión:", error);
-    });
+  localStorage.removeItem("user");
+  localStorage.removeItem("authToken");
+  router.push("/");
 };
 </script>
 

@@ -130,34 +130,32 @@ const login = async () => {
 
   try {
     // Realizar petición al backend para autenticar con la base de datos local
-    const response = await axios.post("/api/auth/login", {
+    const response = await axios.post("http://localhost:3000/api/login", {
       username: username.value,
       password: password.value
     });
 
     // Si la autenticación es exitosa, guardar datos del usuario en localStorage
-    if (response.data && response.data.user) {
-      // Guardar token de sesión si existe
-      if (response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
-        // Configurar token para futuras peticiones
-        axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
-      }
+    if (response.data) {
+      const token = response.data.data.token;
+      const user = response.data.data.user;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      console.log(token);
+      
 
-      // Guardar información del usuario
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      // Guardar información del usuario y el token
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      console.log("Inicio de sesión exitoso");
-      // Redirigir según el rol del usuario
-      if (response.data.user.role === "admin") {
-        router.push("/admin");
+      console.log("Registro exitoso");
+      // Redirigir según el rol del usuario (?)
+      if (user.role === "admin") {
+        router.push("/pos");
       } else {
         router.push("/pos");
       }
     }
   } catch (error) {
-    console.error("Error de autenticación:", error);
-
     // Manejar diferentes tipos de errores
     if (error.response) {
       // Respuesta del servidor con código de error
@@ -189,33 +187,33 @@ const login = async () => {
 import { onMounted } from "vue";
 
 onMounted(() => {
-  // Verificar si ya hay una sesión activa
-  const authToken = localStorage.getItem("authToken");
-  const user = localStorage.getItem("user");
+  // // Verificar si ya hay una sesión activa
+  // const authToken = localStorage.getItem("authToken");
+  // const user = localStorage.getItem("user");
 
-  if (authToken && user) {
-    // Configurar token para peticiones
-    axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
+  // if (authToken && user) {
+  //   // Configurar token para peticiones
+  //   axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 
-    // Verificar si el token sigue siendo válido (opcional)
-    axios
-      .get("/api/auth/verify")
-      .then(() => {
-        const userData = JSON.parse(user);
-        // Redirigir según el rol del usuario
-        if (userData.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/pos");
-        }
-      })
-      .catch((err) => {
-        // Si el token no es válido, limpiar localStorage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
-        console.log("Sesión expirada o inválida");
-      });
-  }
+  //   // Verificar si el token sigue siendo válido (opcional)
+  //   axios
+  //     .get("http://localhost:3000/api/login")
+  //     .then(() => {
+  //       const userData = JSON.parse(user);
+  //       // Redirigir según el rol del usuario
+  //       if (userData.role === "admin") {
+  //         router.push("/admin");
+  //       } else {
+  //         router.push("/pos");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // Si el token no es válido, limpiar localStorage
+  //       localStorage.removeItem("authToken");
+  //       localStorage.removeItem("user");
+  //       console.log("Sesión expirada o inválida");
+  //     });
+  // }
 
   // Cargar Bootstrap Icons
   const bootstrapIcons = document.createElement("link");

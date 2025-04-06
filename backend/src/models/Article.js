@@ -3,16 +3,28 @@ import db from "../config/database.js";
 export class Article {
   static async findAll({ description, businessId }) {
     try {
-      const descriptionParam = `%${description}%`;
-      const [articles] = await db.query(
-        `SELECT a.*, c.name as category_name 
-         FROM article a
-         JOIN category c ON a.category_id = c.id
-         WHERE a.description LIKE ?
-         AND a.business_id = ?
-         ORDER BY a.id DESC`,
-        [descriptionParam, businessId]
-      );
+      let articles = [];
+      if (description) {
+        const descriptionParam = `%${description}%`;
+        [articles] = await db.query(
+          `SELECT a.*, c.name as category_name 
+           FROM article a
+           JOIN category c ON a.category_id = c.id
+           WHERE a.description LIKE ?
+           AND a.business_id = ?
+           ORDER BY a.id DESC`,
+          [descriptionParam, businessId]
+        );
+      } else {
+        [articles] = await db.query(
+          `SELECT a.*, c.name as category_name 
+           FROM article a
+           JOIN category c ON a.category_id = c.id
+           WHERE a.business_id = ?
+           ORDER BY a.id DESC`,
+          [businessId]
+        );
+      }
       return articles;
     } catch (error) {
       throw new Error(`Error fetching articles: ${error.message}`);

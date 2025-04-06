@@ -261,6 +261,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 // Simulación de base de datos con usuarios y correos existentes
 const existingEmails = ["tienda@ejemplo.com", "abarrotes@ejemplo.com", "mini@ejemplo.com"];
@@ -299,46 +300,46 @@ const isLoading = ref(false);
 const router = useRouter();
 
 // Funciones para verificación
-const isEmailRegistered = (emailToCheck) => {
-  return existingEmails.includes(emailToCheck.toLowerCase());
-};
+// const isEmailRegistered = (emailToCheck) => {
+//   return existingEmails.includes(emailToCheck.toLowerCase());
+// };
 
-const isUsernameRegistered = (usernameToCheck) => {
-  return existingUsernames.includes(usernameToCheck.toLowerCase());
-};
+// const isUsernameRegistered = (usernameToCheck) => {
+//   return existingUsernames.includes(usernameToCheck.toLowerCase());
+// };
 
 // Verificación en tiempo real para usuario
-watch(user, (newValue) => {
-  if (newValue.length > 3) {
-    // Solo verificar cuando hay al menos 3 caracteres
-    if (isUsernameRegistered(newValue)) {
-      userMsg.value = "Este nombre de usuario ya está en uso";
-      isUserAvailable.value = false;
-    } else {
-      userMsg.value = "Nombre de usuario disponible";
-      isUserAvailable.value = true;
-    }
-  } else {
-    userMsg.value = "";
-    isUserAvailable.value = true;
-  }
-});
+// watch(user, (newValue) => {
+//   if (newValue.length > 3) {
+//     // Solo verificar cuando hay al menos 3 caracteres
+//     if (isUsernameRegistered(newValue)) {
+//       userMsg.value = "Este nombre de usuario ya está en uso";
+//       isUserAvailable.value = false;
+//     } else {
+//       userMsg.value = "Nombre de usuario disponible";
+//       isUserAvailable.value = true;
+//     }
+//   } else {
+//     userMsg.value = "";
+//     isUserAvailable.value = true;
+//   }
+// });
 
 // Verificación en tiempo real para correo
-watch(email, (newValue) => {
-  if (newValue && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newValue)) {
-    if (isEmailRegistered(newValue)) {
-      emailMsg.value = "Este correo ya está registrado";
-      isEmailAvailable.value = false;
-    } else {
-      emailMsg.value = "Correo disponible";
-      isEmailAvailable.value = true;
-    }
-  } else {
-    emailMsg.value = "";
-    isEmailAvailable.value = true;
-  }
-});
+// watch(email, (newValue) => {
+//   if (newValue && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newValue)) {
+//     if (isEmailRegistered(newValue)) {
+//       emailMsg.value = "Este correo ya está registrado";
+//       isEmailAvailable.value = false;
+//     } else {
+//       emailMsg.value = "Correo disponible";
+//       isEmailAvailable.value = true;
+//     }
+//   } else {
+//     emailMsg.value = "";
+//     isEmailAvailable.value = true;
+//   }
+// });
 
 // Verificación en tiempo real para contraseña
 watch(password, (newValue) => {
@@ -432,30 +433,49 @@ const register = async () => {
   isLoading.value = true;
   errMsg.value = "";
 
+  const data = {
+    business: {
+      name: businessName.value,
+      address: address.value,
+      phone: phone.value,
+      email: email.value
+    },
+    user: {
+      full_name: name.value,
+      username: user.value,
+      password: password.value
+    }
+  };
+
   try {
-    // Aquí se conectaría con el backend real
-    console.log("Datos de registro:", {
-      negocio: {
-        nombre: businessName.value,
-        direccion: address.value,
-        telefono: phone.value,
-        email: email.value
-      },
-      usuario: {
-        nombre_completo: name.value,
-        usuario: user.value,
-        password: password.value
+    const response = await axios.post("http://localhost:3000/api/signup", data);
+    console.log(response);
+
+    if (response.data) {
+      const token = response.data.data.token;
+      const user = response.data.data.user;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // Guardar información del usuario y el token
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("Registro exitoso");
+      // Redirigir según el rol del usuario (?)
+      if (user.role === "admin") {
+        router.push("/pos");
+      } else {
+        router.push("/pos");
       }
-    });
-
-    // Simular verificación en el servidor
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log("Registro exitoso");
-    router.push("/pos");
+    }
   } catch (error) {
-    console.error("Error de registro:", error);
-    errMsg.value = "Error en el registro. Por favor, intenta nuevamente.";
+    switch (error.response.status) {
+      case 401:
+        errMsg.value = "Credenciales inválidas";
+        break;
+      default:
+        errMsg.value = "Error en el servidor. Inténtalo más tarde";
+    }
   } finally {
     isLoading.value = false;
   }

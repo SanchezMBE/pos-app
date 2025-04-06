@@ -53,6 +53,14 @@ export class AuthController {
         businessId: business_id
       });
 
+      const token = jwt.sign(
+        { id: userResult.id, business_id: userResult.business_id, role: userResult.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h"
+        }
+      );
+
       res.status(201).json({
         success: true,
         data: {
@@ -66,7 +74,8 @@ export class AuthController {
             username: userResult.username,
             full_name: userResult.full_name,
             role: userResult.role
-          }
+          },
+          token
         },
         message: "Business and user created successfully"
       });
@@ -101,12 +110,20 @@ export class AuthController {
       }
 
       // Creación del token JWT
-       
       const token = jwt.sign({ id: user.id, business_id: user.business_id, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: "1h"
       });
 
-      res.json({ token });
+      res.json({
+        success: true,
+        data: {
+          user: {
+            username: user.username,
+            role: user.role
+          },
+          token
+        }
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
