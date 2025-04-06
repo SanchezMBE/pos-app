@@ -8,17 +8,18 @@ const router = createRouter({
     { path: "/signup", component: () => import("../views/SignUp.vue") },
     { path: "/login", component: () => import("../views/LogIn.vue") },
     { path: "/articles", component: () => import("../views/Articles.vue") },
+    { path: "/recover-password", component: () => import("../views/recoverPassword.vue") },
     {
       path: "/pos",
-      component: () => import("../views/Home.vue"), 
+      component: () => import("../views/Home.vue"),
       // children: [
       //   { path: "/articles", component: () => import("../views/Articles.vue")},
       // ],
       meta: {
-        requiresAuth: true,
-      },
-    },
-  ],
+        requiresAuth: true
+      }
+    }
+  ]
 });
 
 const getCurrentUser = () => {
@@ -29,7 +30,7 @@ const getCurrentUser = () => {
         removeListener();
         resolve(user);
       },
-      reject,
+      reject
     );
   });
 };
