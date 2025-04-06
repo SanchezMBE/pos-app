@@ -5,10 +5,7 @@
       <div class="col-lg-6 d-none d-lg-block bg-primary text-white">
         <div class="d-flex flex-column justify-content-center h-100 p-5">
           <h2 class="display-6 fw-bold mb-4">Únete a StorePOS</h2>
-          <p class="fs-5 mb-4">
-            Optimiza tu tienda de abarrotes con nuestro sistema integral de
-            punto de venta.
-          </p>
+          <p class="fs-5 mb-4">Optimiza tu tienda de abarrotes con nuestro sistema integral de punto de venta.</p>
           <div class="features mt-4">
             <div class="d-flex align-items-center mb-3">
               <i class="bi bi-check-circle-fill me-3 fs-4"></i>
@@ -28,9 +25,7 @@
 
       <!-- Formulario de registro -->
       <div class="col-lg-6 bg-white">
-        <div
-          class="d-flex flex-column justify-content-center align-items-center h-100 p-4"
-        >
+        <div class="d-flex flex-column justify-content-center align-items-center h-100 p-4">
           <div class="text-center mb-4">
             <a href="/">
               <img
@@ -40,24 +35,18 @@
                 style="max-height: 60px"
               />
             </a>
-            <h1 class="h3 mb-3 fw-bold">Crea una cuenta</h1>
+            <h1 class="h3 mb-3 fw-bold">Crea una cuenta para tu negocio</h1>
             <p class="text-muted">
-              {{
-                paso === 1
-                  ? "Ingresa la información de tu negocio"
-                  : "Registra tus datos de usuario para finalizar"
-              }}
+              {{ paso === 1 ? "Ingresa la información de tu negocio" : "Registra tus datos de usuario para finalizar" }}
             </p>
           </div>
 
-          <div class="card border-0 shadow-sm w-100" style="max-width: 400px">
+          <div class="card border-1 shadow-sm w-100" style="max-width: 400px">
             <div class="card-body p-4">
               <!-- Paso 1: Datos del negocio -->
               <div v-if="paso === 1">
                 <div class="mb-4">
-                  <label for="businessName" class="form-label"
-                    >Nombre del negocio</label
-                  >
+                  <label for="businessName" class="form-label">Nombre del negocio</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
                       <i class="bi bi-shop"></i>
@@ -89,9 +78,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <label for="phone" class="form-label"
-                    >Número telefónico</label
-                  >
+                  <label for="phone" class="form-label">Número telefónico</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
                       <i class="bi bi-telephone"></i>
@@ -107,9 +94,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <label for="email" class="form-label"
-                    >Correo electrónico</label
-                  >
+                  <label for="email" class="form-label">Correo electrónico</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
                       <i class="bi bi-envelope"></i>
@@ -120,7 +105,7 @@
                       class="form-control border-start-1"
                       :class="{
                         'is-invalid': !isEmailAvailable && emailMsg,
-                        'is-valid': isEmailAvailable && emailMsg,
+                        'is-valid': isEmailAvailable && emailMsg
                       }"
                       placeholder="Ingresa el correo de tu negocio"
                       v-model="email"
@@ -131,7 +116,7 @@
                     class="form-text"
                     :class="{
                       'text-success': isEmailAvailable,
-                      'text-danger': !isEmailAvailable,
+                      'text-danger': !isEmailAvailable
                     }"
                   >
                     {{ emailMsg }}
@@ -161,7 +146,7 @@
                   <label for="user" class="form-label">Nombre de usuario</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                      <i class="bi bi-person-circle"></i>
+                      <i class="bi bi-person"></i>
                     </span>
                     <input
                       type="text"
@@ -169,7 +154,7 @@
                       class="form-control border-start-1"
                       :class="{
                         'is-invalid': !isUserAvailable && userMsg,
-                        'is-valid': isUserAvailable && userMsg,
+                        'is-valid': isUserAvailable && userMsg
                       }"
                       placeholder="Ingresa un nombre de usuario"
                       v-model="user"
@@ -180,7 +165,7 @@
                     class="form-text"
                     :class="{
                       'text-success': isUserAvailable,
-                      'text-danger': !isUserAvailable,
+                      'text-danger': !isUserAvailable
                     }"
                   >
                     {{ userMsg }}
@@ -200,21 +185,13 @@
                       v-model="password"
                       placeholder="Contraseña"
                     />
-                    <button
-                      class="btn btn-outline-secondary"
-                      type="button"
-                      @click="showPassword = !showPassword"
-                    >
-                      <i
-                        :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
-                      ></i>
+                    <button class="btn btn-outline-secondary" type="button" @click="showPassword = !showPassword">
+                      <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                     </button>
                   </div>
                   <small
                     :class="
-                      passwordRequirements.length &&
-                      passwordRequirements.number &&
-                      passwordRequirements.special
+                      passwordRequirements.length && passwordRequirements.number && passwordRequirements.special
                         ? 'text-success'
                         : 'text-danger'
                     "
@@ -223,12 +200,10 @@
                 </div>
 
                 <div class="mb-4">
-                  <label for="confirmPassword" class="form-label"
-                    >Confirma tu contraseña</label
-                  >
+                  <label for="confirmPassword" class="form-label">Confirma tu contraseña</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                      <i class="bi bi-lock"></i>
+                      <i class="bi bi-lock-fill"></i>
                     </span>
                     <input
                       :type="showConfirmPassword ? 'text' : 'password'"
@@ -242,34 +217,18 @@
                       type="button"
                       @click="showConfirmPassword = !showConfirmPassword"
                     >
-                      <i
-                        :class="
-                          showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
-                        "
-                      ></i>
+                      <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                     </button>
                   </div>
-                  <small
-                    :class="isPasswordMatch ? 'text-success' : 'text-danger'"
-                    >{{ passwordMatch }}</small
-                  >
+                  <small :class="isPasswordMatch ? 'text-success' : 'text-danger'">{{ passwordMatch }}</small>
                 </div>
               </div>
 
               <p v-if="errMsg" class="alert alert-danger py-2">{{ errMsg }}</p>
 
               <div class="d-flex gap-2 mb-3" v-if="paso === 2">
-                <button
-                  @click="paso = 1"
-                  class="btn btn-outline-secondary flex-grow-1"
-                >
-                  Atrás
-                </button>
-                <button
-                  @click="register"
-                  class="btn btn-primary flex-grow-1"
-                  :disabled="isLoading"
-                >
+                <button @click="paso = 1" class="btn btn-outline-secondary flex-grow-1">Atrás</button>
+                <button @click="register" class="btn btn-primary flex-grow-1" :disabled="isLoading">
                   <span
                     v-if="isLoading"
                     class="spinner-border spinner-border-sm me-2"
@@ -280,20 +239,14 @@
                 </button>
               </div>
 
-              <button
-                v-if="paso === 1"
-                @click="siguientePaso"
-                class="btn btn-primary w-100 py-2 mb-3"
-              >
+              <button v-if="paso === 1" @click="siguientePaso" class="btn btn-primary w-100 py-2 mb-3">
                 Siguiente
               </button>
 
               <div class="mt-4 text-center">
                 <p class="mb-0">
                   ¿Ya tienes una cuenta?
-                  <a href="/login" class="text-decoration-none fw-semibold"
-                    >Inicia sesión</a
-                  >
+                  <a href="/login" class="text-decoration-none fw-semibold">Inicia sesión</a>
                 </p>
               </div>
             </div>
@@ -310,11 +263,7 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 // Simulación de base de datos con usuarios y correos existentes
-const existingEmails = [
-  "tienda@ejemplo.com",
-  "abarrotes@ejemplo.com",
-  "mini@ejemplo.com",
-];
+const existingEmails = ["tienda@ejemplo.com", "abarrotes@ejemplo.com", "mini@ejemplo.com"];
 const existingUsernames = ["admin", "cajero1", "usuario1", "vendedor"];
 
 // Datos del usuario (paso 2)
@@ -326,7 +275,7 @@ const passwordStrength = ref("");
 const passwordRequirements = {
   length: false,
   number: false,
-  special: false,
+  special: false
 };
 const passwordMatch = ref("");
 const isPasswordMatch = ref(false);
@@ -395,24 +344,17 @@ watch(email, (newValue) => {
 watch(password, (newValue) => {
   passwordRequirements.length = newValue.length >= 6;
   passwordRequirements.number = /[0-9]/.test(newValue);
-  passwordRequirements.special = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
-    newValue,
-  );
+  passwordRequirements.special = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newValue);
 
   if (newValue.length === 0) {
     passwordStrength.value = "";
-  } else if (
-    passwordRequirements.length &&
-    passwordRequirements.number &&
-    passwordRequirements.special
-  ) {
+  } else if (passwordRequirements.length && passwordRequirements.number && passwordRequirements.special) {
     passwordStrength.value = "Contraseña fuerte";
   } else {
     let mensaje = "La contraseña debe tener: ";
     if (!passwordRequirements.length) mensaje += "al menos 6 caracteres, ";
     if (!passwordRequirements.number) mensaje += "al menos un número, ";
-    if (!passwordRequirements.special)
-      mensaje += "al menos un carácter especial, ";
+    if (!passwordRequirements.special) mensaje += "al menos un carácter especial, ";
     passwordStrength.value = mensaje.slice(0, -2); // Quitar la última coma y espacio
   }
 });
@@ -441,8 +383,7 @@ const siguientePaso = () => {
   // Validación para número telefónico (solo dígitos y mínimo 10)
   const phoneRegex = /^\d{10,}$/;
   if (!phoneRegex.test(phone.value)) {
-    errMsg.value =
-      "El número telefónico debe contener al menos 10 dígitos numéricos";
+    errMsg.value = "El número telefónico debe contener al menos 10 dígitos numéricos";
     return;
   }
 
@@ -455,8 +396,7 @@ const siguientePaso = () => {
 
   // Verificar si el correo ya está registrado
   if (isEmailRegistered(email.value)) {
-    errMsg.value =
-      "Este correo electrónico ya está registrado. Por favor, utiliza otro.";
+    errMsg.value = "Este correo electrónico ya está registrado. Por favor, utiliza otro.";
     return;
   }
 
@@ -474,8 +414,7 @@ const register = async () => {
 
   // Verificar si el nombre de usuario ya está registrado
   if (isUsernameRegistered(user.value)) {
-    errMsg.value =
-      "Este nombre de usuario ya está en uso. Por favor, elige otro.";
+    errMsg.value = "Este nombre de usuario ya está en uso. Por favor, elige otro.";
     return;
   }
 
@@ -484,11 +423,9 @@ const register = async () => {
     return;
   }
 
-  const passwordRegex =
-    /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[a-zA-Z]).{6,}$/;
+  const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[a-zA-Z]).{6,}$/;
   if (!passwordRegex.test(password.value)) {
-    errMsg.value =
-      "La contraseña debe tener al menos 6 caracteres, incluir al menos un número y un carácter especial";
+    errMsg.value = "La contraseña debe tener al menos 6 caracteres, al menos un número y un carácter especial";
     return;
   }
 
@@ -502,13 +439,13 @@ const register = async () => {
         nombre: businessName.value,
         direccion: address.value,
         telefono: phone.value,
-        email: email.value,
+        email: email.value
       },
       usuario: {
         nombre_completo: name.value,
         usuario: user.value,
-        password: password.value,
-      },
+        password: password.value
+      }
     });
 
     // Simular verificación en el servidor
@@ -529,8 +466,7 @@ onMounted(() => {
   if (!document.querySelector('link[href*="bootstrap-icons"]')) {
     const bootstrapIcons = document.createElement("link");
     bootstrapIcons.rel = "stylesheet";
-    bootstrapIcons.href =
-      "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css";
+    bootstrapIcons.href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css";
     document.head.appendChild(bootstrapIcons);
   }
 });
