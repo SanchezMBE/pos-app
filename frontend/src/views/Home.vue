@@ -5,7 +5,7 @@
       <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
         <a href="/pos">
           <img
-            src="D:\pos-app\pos-app\frontend\src\assets\favicon.ico"
+            src="C:\Users\Admin\OneDrive\Documentos\ProyectoPuntoVentaMedina\pos-app\frontend\src\assets\favicon.ico"
             alt="Retail-Insight Logo"
             class="img-fluid me-3"
             style="max-height: 60px"
@@ -97,7 +97,7 @@
         <!-- Tarjetas de acceso rápido -->
         <div class="row mb-5 g-3">
           <div class="col-12 col-md-6 col-lg-3">
-            <router-link to="/ventas" class="text-decoration-none">
+            <router-link to="/Sales" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
@@ -284,46 +284,46 @@
         </div>
 
         <div class="row">
-          <div class="col-12">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Producto</th>
-                        <th>Código</th>
-                        <th>Categoría</th>
-                        <th>Ventas</th>
-                        <th>Stock</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(product, index) in topProducts" :key="index">
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.code }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>{{ product.sales }}</td>
-                        <td>
-                          <span
-                            :class="
-                              'badge ' +
-                              (product.stock < 10 ? 'bg-danger' : 'bg-success')
-                            "
-                          >
-                            {{ product.stock }}
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    <div class="col-12">
+      <div class="card border-0 shadow-lg rounded-4">
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col">Producto</th>
+                  <th scope="col">Código</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Ventas</th>
+                  <th scope="col">Stock</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product, index) in topProducts" :key="index">
+                  <td class="fw-semibold">{{ product.name }}</td>
+                  <td>{{ product.code }}</td>
+                  <td>{{ product.category }}</td>
+                  <td>{{ product.sales }}</td>
+                  <td>
+                    <span
+                      :class="[
+                        'badge fs-6',
+                        product.stock < 10 ? 'bg-danger' : 'bg-success'
+                      ]"
+                    >
+                      {{ product.stock }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
+</div>
+</div>
   </div>
 </template>
 
