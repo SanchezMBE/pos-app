@@ -229,48 +229,6 @@
             </div>
           </div>
         </template>
-
-        <!-- Productos - visible para ambos roles --> // ESTO NO VA A ESTAS AQUÍ SINO EN INVENTARIO
-        <div class="row mb-3">
-          <div class="col-12">
-            <h2 class="fw-bold">Productos</h2>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Producto</th>
-                        <th>Código</th>
-                        <th>Precio</th>
-                        <th>Categoría</th>
-                        <th>Stock</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(product, index) in productsData" :key="index">
-                        <td>{{ product.description }}</td>
-                        <td>{{ product.code }}</td>
-                        <td>{{ product.price }}</td>
-                        <td>{{ product.category_name }}</td>
-                        <td>
-                          <span :class="'badge ' + (product.stock < 10 ? 'bg-danger' : 'bg-success')">
-                            {{ product.stock }}
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

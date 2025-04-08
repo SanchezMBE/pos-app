@@ -470,7 +470,7 @@ const register = async () => {
     }
   } catch (error) {
     switch (error.response.status) {
-      case 401:
+      case 400:
         errMsg.value = "Credenciales inválidas";
         break;
       default:

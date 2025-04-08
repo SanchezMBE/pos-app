@@ -1,14 +1,13 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
-import 'datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css';
-import 'datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css';
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
+import "datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css";
 
 // Import the functions you need from the SDKs you need
-import { initializeApp, } from "firebase/app";
+import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,9 +20,6 @@ const firebaseConfig = {
   messagingSenderId: "85541569152",
   appId: "1:85541569152:web:eeeb7e8a62038a0b3d5c65"
 };
-
-// Initialize Firebase
-initializeApp(firebaseConfig);
 
 const app = createApp(App);
 
