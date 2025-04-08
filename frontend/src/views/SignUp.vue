@@ -413,11 +413,11 @@ const register = async () => {
     return;
   }
 
-  // Verificar si el nombre de usuario ya está registrado
-  if (isUsernameRegistered(user.value)) {
-    errMsg.value = "Este nombre de usuario ya está en uso. Por favor, elige otro.";
-    return;
-  }
+  // // Verificar si el nombre de usuario ya está registrado
+  // if (isUsernameRegistered(user.value)) {
+  //   errMsg.value = "Este nombre de usuario ya está en uso. Por favor, elige otro.";
+  //   return;
+  // }
 
   if (password.value !== confirmPassword.value) {
     errMsg.value = "Las contraseñas no coinciden";
