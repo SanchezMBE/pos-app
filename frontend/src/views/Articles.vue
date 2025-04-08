@@ -87,7 +87,7 @@ const data = ref([]);
 const selectedItem = ref(null);
 const alertMessage = ref("");
 const alertType = ref("info"); // success, danger, warning, info
-const user = ref(null); // Agregamos la variable user
+const user = ref(null);
 
 const columns = [
   { data: "description" },
@@ -126,12 +126,12 @@ const loadInventory = async () => {
 
 const openAddModal = () => {
   selectedItem.value = null;
-  // Aquí podrías implementar la lógica para abrir un modal de añadir producto
+  // implementar la lógica para abrir un modal de añadir producto
 };
 
 const editItem = (item) => {
   selectedItem.value = { ...item };
-  // Aquí podrías implementar la lógica para abrir un modal de edición
+  // implementar la lógica para abrir un modal de edición
 };
 
 const confirmDelete = (item) => {
