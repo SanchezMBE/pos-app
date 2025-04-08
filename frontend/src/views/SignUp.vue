@@ -395,11 +395,11 @@ const siguientePaso = () => {
     return;
   }
 
-  // Verificar si el correo ya está registrado
-  if (isEmailRegistered(email.value)) {
-    errMsg.value = "Este correo electrónico ya está registrado. Por favor, utiliza otro.";
-    return;
-  }
+  // // Verificar si el correo ya está registrado
+  // if (isEmailRegistered(email.value)) {
+  //   errMsg.value = "Este correo electrónico ya está registrado. Por favor, utiliza otro.";
+  //   return;
+  // }
 
   // Si todo está correcto, avanzamos al paso 2
   errMsg.value = "";
