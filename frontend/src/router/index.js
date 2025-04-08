@@ -1,4 +1,3 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -9,35 +8,27 @@ const router = createRouter({
     { path: "/login", component: () => import("../views/LogIn.vue") },
     { path: "/articles", component: () => import("../views/Articles.vue") },
     { path: "/sales", component: () => import("../views/Sales.vue") },
+    { path: "/recover-password", component: () => import("../views/recoverPassword.vue") },
+    { path: "/inventario", component: () => import("../views/Articles.vue") },
     {
       path: "/pos",
-      component: () => import("../views/Home.vue"), 
+      component: () => import("../views/Home.vue"),
       // children: [
       //   { path: "/articles", component: () => import("../views/Articles.vue")},
       // ],
       meta: {
-        requiresAuth: true,
-      },
-    },
-  ],
+        requiresAuth: true
+      }
+    }
+  ]
 });
 
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const removeListener = onAuthStateChanged(
-      getAuth(),
-      (user) => {
-        removeListener();
-        resolve(user);
-      },
-      reject,
-    );
-  });
-};
+const getCurrentUser = () => {};
 
 router.beforeEach(async (to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (await getCurrentUser()) {
+  // cambiar true por verificar si hay un usuario autenticado
+  if (true) {
+    if (true) {
       next();
     } else {
       console.error("Acceso denegado");
