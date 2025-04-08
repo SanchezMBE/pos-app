@@ -171,6 +171,6 @@ onMounted(async () => {
     showAlert("No se ha iniciado sesión. Algunas funciones podrían estar limitadas.", "warning");
   }
 
-  await getArticulos();
+  await loadInventory();
 });
 </script>
