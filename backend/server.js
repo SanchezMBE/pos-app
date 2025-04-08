@@ -1,10 +1,10 @@
- 
 import express from "express";
 import dotenv from "dotenv";
 import { corsMiddleware } from "./src/middlewares/corsMiddleware.js";
 
-import adminArticleRoutes from "./src/routes/admin/article.js";
 import authRoutes from "./src/routes/auth.js";
+import adminArticleRoutes from "./src/routes/admin/article.js";
+import adminCategoryRoutes from "./src/routes/admin/category.js";
 // import casherArticleRoutes from "./routes/casher/articleRoutes.js";
 
 dotenv.config();
@@ -23,6 +23,7 @@ app.use(corsMiddleware());
 app.use("/api", authRoutes);
 
 app.use("/api/admin/articles", adminArticleRoutes);
+app.use("/api/admin/categories", adminCategoryRoutes);
 // app.use("/api/cashers", casherArticleRoutes);
 
 const port = process.env.port || 3000;
