@@ -1,69 +1,7 @@
 <template>
   <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
-    <div class="bg-dark text-white border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading py-4 px-3 d-flex align-items-center">
-        <a href="/pos">
-          <img src="../assets/favicon.ico" alt="Retail-Insight Logo" class="img-fluid me-3" style="max-height: 60px" />
-        </a>
-        <div>
-          <h4 class="mb-0 fw-bold">Store POS</h4>
-          <small>Control de Ventas</small>
-        </div>
-      </div>
-
-      <div class="list-group list-group-flush">
-        <!-- Opciones para ambos roles -->
-        <router-link to="/ventas" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-cart me-2"></i> Punto de Venta
-        </router-link>
-
-        <router-link
-          to="/historial-ventas"
-          class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
-        >
-          <i class="bi bi-clock-history me-2"></i> Historial de Ventas
-        </router-link>
-
-        <!-- Opciones solo para administradores -->
-        <template v-if="user.role === 'admin'">
-          <router-link to="/inventario" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-            <i class="bi bi-box-seam me-2"></i> Inventario
-          </router-link>
-
-          <router-link to="/corte-caja" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-            <i class="bi bi-receipt-cutoff me-2"></i> Corte de Caja
-          </router-link>
-
-          <router-link to="/reportes" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-            <i class="bi bi-graph-up me-2"></i> Reportes
-          </router-link>
-
-          <router-link to="/usuarios" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-            <i class="bi bi-people me-2"></i> Usuarios
-          </router-link>
-        </template>
-      </div>
-
-      <!-- Usuario y cierre de sesión -->
-      <div class="mt-auto border-top p-3">
-        <div class="d-flex align-items-center">
-          <div
-            class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
-            style="width: 40px; height: 40px"
-          >
-            {{ getUserInitials() }}
-          </div>
-          <div class="flex-grow-1">
-            <div class="fw-bold">{{ user.username }}</div>
-            <small>{{ user.role === "admin" ? "Administrador" : user.role === "cashier" ? "Cajero" : "" }}</small>
-          </div>
-          <button @click="handleSignOut" class="btn btn-sm btn-outline-light">
-            <i class="bi bi-box-arrow-right"></i>
-          </button>
-        </div>
-      </div>
-    </div>
+    <Sidebar :user="user" />
 
     <!-- Page Content -->
     <div id="page-content-wrapper" class="flex-grow-1 bg-light">
@@ -77,7 +15,7 @@
         <!-- Tarjetas de acceso rápido -->
         <div class="row mb-5 g-3">
           <div class="col-12 col-md-6 col-lg-3">
-            <router-link to="/ventas" class="text-decoration-none">
+            <router-link to="/Sales" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
@@ -231,20 +169,18 @@
         </template>
       </div>
     </div>
-  </div>
+</div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
 
-const router = useRouter();
 const user = ref({
   username: "Usuario",
   role: ""
 });
-const productsData = ref([]);
 
 onMounted(async () => {
   const storedUser = localStorage.getItem("user");
@@ -261,29 +197,7 @@ onMounted(async () => {
   if (storedToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
   }
-
-  await getProducts();
 });
-
-const getUserInitials = () => {
-  const name = user.value.username || "U";
-  return name.charAt(0).toUpperCase();
-};
-
-const getProducts = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/admin/articles");
-    if (response.data) {
-      productsData.value = response.data.data;
-    }
-  } catch (error) {}
-};
-
-const handleSignOut = () => {
-  localStorage.removeItem("user");
-  localStorage.removeItem("authToken");
-  router.push("/");
-};
 </script>
 
 <style>
@@ -291,13 +205,6 @@ const handleSignOut = () => {
 
 #wrapper {
   min-height: 100vh;
-}
-
-#sidebar-wrapper {
-  width: 250px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .list-group-item:hover {

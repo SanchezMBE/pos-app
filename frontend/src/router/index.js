@@ -7,6 +7,7 @@ const router = createRouter({
     { path: "/signup", component: () => import("../views/SignUp.vue") },
     { path: "/login", component: () => import("../views/LogIn.vue") },
     { path: "/articles", component: () => import("../views/Articles.vue") },
+    { path: "/sales", component: () => import("../views/Sales.vue") },
     { path: "/recover-password", component: () => import("../views/recoverPassword.vue") },
     { path: "/inventario", component: () => import("../views/Articles.vue") },
     {
