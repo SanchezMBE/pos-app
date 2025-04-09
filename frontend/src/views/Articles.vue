@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <Sidebar :user="user" />
 
-    <div id="page-content-wrapper" class="flex-grow-1 bg-light cntainer-fluid p-4">
+    <div id="page-content-wrapper" class="flex-grow-1 bg-light p-4">
       <h2 class="fw-bold">Inventario de Artículos</h2>
 
       <!-- Alerta para mostrar mensajes -->

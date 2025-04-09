@@ -11,8 +11,8 @@
     </div>
 
     <div class="list-group list-group-flush">
-      <router-link to="/ventas" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-        <i class="bi bi-cart me-2"></i> Punto de Venta
+      <router-link to="/pos" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
+        <i class="bi bi-cart me-2"></i> Panel de control
       </router-link>
 
       <router-link
@@ -62,8 +62,8 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineProps } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   user: Object
@@ -72,7 +72,7 @@ const props = defineProps({
 const router = useRouter();
 
 const getUserInitials = () => {
-  const name = props.user?.username || 'U';
+  const name = props.user?.username || "U";
   return name.charAt(0).toUpperCase();
 };
 
