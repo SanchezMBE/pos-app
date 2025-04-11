@@ -60,7 +60,7 @@
           </div>
 
           <div class="col-12 col-md-6 col-lg-3" v-if="user.role === 'admin'">
-            <router-link to="/corte-caja" class="text-decoration-none">
+            <router-link to="/boxcut" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div

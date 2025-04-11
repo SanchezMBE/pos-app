@@ -27,7 +27,7 @@
           <i class="bi bi-box-seam me-2"></i> Inventario
         </router-link>
 
-        <router-link to="/corte-caja" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
+        <router-link to="/boxcut" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
           <i class="bi bi-receipt-cutoff me-2"></i> Corte de Caja
         </router-link>
 
