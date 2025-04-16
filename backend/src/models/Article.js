@@ -106,6 +106,21 @@ export class Article {
     }
   }
 
+  static async updateStock({ articleId: article_id, quantity }) {
+    try {
+      const [result] = await db.query(
+        `UPDATE article 
+         SET stock = stock - ? 
+         WHERE id = ?`,
+        [quantity, article_id]
+      );
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw new Error(`Error updating stock: ${error.message}`);
+    }
+  }
+
   static async update({ id, articleData, businessId }) {
     try {
       const { category_id, description, code, barcode, price, cost, stock } = articleData;

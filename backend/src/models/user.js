@@ -51,7 +51,7 @@ export class User {
         [businessId, username, password, full_name, role]
       );
 
-      return { id: result.insertId, ...userData };
+      return { id: result.insertId, ...userData, business_id: businessId };
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
         if (error.message.includes("code")) {
