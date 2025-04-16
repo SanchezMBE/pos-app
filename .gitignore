@@ -1,3 +1,6 @@
 node_modules
 .env
 coverage
+
+# Este archivo es generado automáticamente cuando se ejecuta npm install.
+package-lock.json
