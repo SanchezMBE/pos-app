@@ -4,7 +4,7 @@
     <Sidebar :user="user" />
 
     <div id="page-content-wrapper" class="flex-grow-1 bg-light p-4">
-      <h2 class="fw-bold">Historial de ventas</h2>
+      <h2 class="fw-bold">Historial de Ventas</h2>
 
       <!-- Alerta para mostrar mensajes -->
       <div v-if="alertMessage" :class="`alert alert-${alertType} alert-dismissible fade show`" role="alert">
@@ -133,7 +133,6 @@ onMounted(async () => {
   if (storedUser) {
     try {
       user.value = JSON.parse(storedUser);
-      console.log("Usuario cargado:", user.value);
     } catch (e) {
       console.error("Error al parsear datos del usuario:", e);
     }

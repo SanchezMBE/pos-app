@@ -8,7 +8,7 @@
       <div class="container-fluid p-4">
         <div class="row mb-4">
           <div class="col-12">
-            <h2 class="fw-bold">Corte de caja</h2>
+            <h2 class="fw-bold">Registro de Turnos</h2>
           </div>
         </div>
 

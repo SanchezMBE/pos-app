@@ -28,8 +28,8 @@
           <i class="bi bi-clock-history me-2"></i> Historial de Ventas
         </router-link>
 
-        <router-link to="/corte-caja" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-receipt-cutoff me-2"></i> Corte de Caja
+        <router-link to="/registros-turnos" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
+          <i class="bi bi-receipt-cutoff me-2"></i> Registro de Turnos
         </router-link>
 
         <!-- <router-link to="/reportes" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">

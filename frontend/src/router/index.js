@@ -10,8 +10,10 @@ const router = createRouter({
     { path: "/pos", component: () => import("../views/Home.vue"), meta: { requiresAuth: true } },
     { path: "/nueva-venta", component: () => import("../views/NewSale.vue") },
     { path: "/inventario", component: () => import("../views/Articles.vue") },
-    { path: "/historial-ventas", component: () => import("../views/Sales.vue") },
-    { path: "/corte-caja", component: () => import("../views/CashAudit.vue") },
+    { path: "/historial-ventas", component: () => import("../views/SalesHistory.vue") },
+    { path: "/registros-turnos", component: () => import("../views/ShiftRecord.vue") },
+    { path: "/corte-caja", component: () => import("../views/CloseShift.vue") },
+    { path: "/apertura-caja", component: () => import("../views/OpenShift.vue") },
     { path: "/usuarios", component: () => import("../views/Users.vue") }
   ]
 });
