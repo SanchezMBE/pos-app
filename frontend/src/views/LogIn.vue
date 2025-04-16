@@ -139,9 +139,6 @@ const login = async () => {
     if (response.data) {
       const token = response.data.data.token;
       const user = response.data.data.user;
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      console.log(token);
-      
 
       // Guardar información del usuario y el token
       localStorage.setItem("authToken", token);

@@ -1,100 +1,66 @@
 <template>
   <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
     <Sidebar :user="user" />
 
-    <div id="page-content-wrapper" class="flex-grow-1 bg-light cntainer-fluid p-4"> 
-      <div class="card shadow-lg border-0">
+    <div id="page-content-wrapper" class="flex-grow-1 bg-light p-4">
+      <h2 class="fw-bold">Historial de ventas</h2>
+
+      <!-- Alerta para mostrar mensajes -->
+      <div v-if="alertMessage" :class="`alert alert-${alertType} alert-dismissible fade show`" role="alert">
+        {{ alertMessage }}
+        <button type="button" class="btn-close" @click="closeAlert" aria-label="Close"></button>
+      </div>
+
+      <div class="card shadow mb-4">
         <div class="card-body">
-          <h4 class="card-title mb-4 text-primary">Nueva Venta</h4>
-
-          <!-- Cliente -->
-          <div class="mb-4">
-            <label class="form-label fw-bold">Cliente</label>
-            <input
-              v-model="cliente"
-              type="text"
-              class="form-control form-control-lg"
-              placeholder="Nombre del cliente"
-            />
-          </div>
-
-          <!-- Cantidad y Producto -->
-          <div class="row g-3 align-items-end">
-            <div class="col-md-2">
-              <label class="form-label fw-bold">Cantidad</label>
-              <div class="input-group">
-                <button class="btn btn-outline-secondary" @click="cantidad = Math.max(1, cantidad - 1)">-</button>
-                <input v-model="cantidad" type="text" class="form-control text-center" />
-                <button class="btn btn-outline-secondary" @click="cantidad++">+</button>
-              </div>
-            </div>
-
-            <div class="col-md-8">
-              <label class="form-label fw-bold">Producto</label>
-              <div class="input-group">
-                <input
-                  v-model="producto"
-                  type="text"
-                  class="form-control form-control-lg"
-                  placeholder="Buscar producto"
-                />
-                <button class="btn btn-outline-danger">
-                  <i class="bi bi-search"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="col-md-2">
-              <button class="btn btn-success btn-lg w-100" @click="agregarProducto">
-                <i class="bi bi-cart-plus me-2"></i> Agregar
-              </button>
-            </div>
-          </div>
-
-          <!-- Tabla -->
-          <div class="table-responsive mt-4">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-primary">
-                <tr>
-                  <th>Cantidad</th>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(p, index) in productos" :key="index">
-                  <td>{{ p.cantidad }}</td>
-                  <td>{{ p.nombre }}</td>
-                  <td>${{ p.precio.toFixed(2) }}</td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-danger" @click="eliminarProducto(index)">
-                      <i class="bi bi-trash3"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Totales -->
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <div class="p-3 bg-light rounded shadow-sm">
-                <p class="mb-1"><strong>Subtotal:</strong> ${{ subtotal.toFixed(2) }}</p>
-                <p class="mb-1"><strong>IVA (16%):</strong> ${{ iva.toFixed(2) }}</p>
-                <p class="fs-4 fw-bold text-success">Total: ${{ total.toFixed(2) }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Botones -->
-          <div class="d-flex justify-content-center mt-4 gap-4">
-            <button class="btn btn-primary btn-lg"><i class="bi bi-currency-dollar"></i> Pagar</button>
-            <button class="btn btn-danger btn-lg" @click="cancelarNota">
-              <i class="bi bi-x-circle me-2"></i> Cancelar
-            </button>
-          </div>
+          <DataTable
+            :data="data"
+            :columns="columns"
+            class="table table-striped table-bordered"
+            :options="{
+              responsive: true,
+              language: {
+                sProcessing: 'Procesando...',
+                sLengthMenu: 'Mostrar _MENU_ registros',
+                sZeroRecords: 'No se encontraron resultados',
+                sEmptyTable: 'Ningún dato disponible en esta tabla',
+                sInfo: 'Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros',
+                sInfoEmpty: 'Mostrando registros del 0 al 0 de un total de 0 registros',
+                sInfoFiltered: '(filtrado de un total de _MAX_ registros)',
+                sSearch: 'Buscar:',
+                sInfoThousands: ',',
+                sLoadingRecords: 'Cargando...',
+                oAria: {
+                  sSortAscending: ': Activar para ordenar la columna de manera ascendente',
+                  sSortDescending: ': Activar para ordenar la columna de manera descendente'
+                },
+                buttons: {
+                  copy: 'Copiar',
+                  colvis: 'Visibilidad'
+                }
+              }
+            }"
+          >
+            <thead>
+              <tr>
+                <th>Fecha y hora</th>
+                <th>Nombre completo</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <template #tbody="{ data }">
+              <tr v-for="item in data" :key="item.id">
+                <td>{{ item.sale_date }}</td>
+                <td>{{ item.full_name }}</td>
+                <td>{{ item.username }}</td>
+                <td>{{ item.role }}</td>
+                <td>{{ item.total }}</td>
+              </tr>
+            </template>
+          </DataTable>
         </div>
       </div>
     </div>
@@ -102,50 +68,63 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net-bs5";
+import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 
-const cliente = ref("");
-const cantidad = ref(1);
-const producto = ref("");
-const productos = ref([]);
+DataTable.use(DataTablesCore);
+
+const data = ref([]);
+const alertMessage = ref("");
+const alertType = ref("info"); // success, danger, warning, info
 const user = ref({
   username: "Usuario",
   role: ""
 });
-const data = ref([]);
 
-const agregarProducto = () => {
-  if (producto.value.trim() === "") return;
-  productos.value.push({
-    nombre: producto.value,
-    cantidad: cantidad.value,
-    precio: 100,
-    descuento: 0
-  });
-  producto.value = "";
-  cantidad.value = 1;
+const columns = [
+  { title: "Fecha y hora", data: "sale_date" },
+  { title: "Nombre completo", data: "full_name" },
+  { title: "Usuario", data: "username" },
+  { title: "Rol", data: "role" },
+  { title: "Total", data: "total" }
+];
+
+const showAlert = (message, type = "info") => {
+  alertMessage.value = message;
+  alertType.value = type;
+
+  // Auto-dismiss después de 5 segundos
+  setTimeout(() => {
+    closeAlert();
+  }, 5000);
 };
 
-const eliminarProducto = (index) => {
-  productos.value.splice(index, 1);
+const closeAlert = () => {
+  alertMessage.value = "";
 };
 
-const cancelarNota = () => {
-  cliente.value = "";
-  cantidad.value = 1;
-  producto.value = "";
-  productos.value = [];
+const loadSales = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`);
+    data.value = response.data.data;
+    // Formatear la fecha y hora
+    data.value.forEach((item) => {
+      item.sale_date = new Date(
+        item.sale_date
+      ).toLocaleString("es-MX", {
+        timeZone: "America/Mexico_City",
+        hour12: false,
+      });
+    });
+  } catch (error) {
+    console.error("Error al cargar ventas:", error);
+    showAlert("No se pudieron cargar los ventas. Inténtalo nuevamente.", "danger");
+  }
 };
-
-const subtotal = computed(() => productos.value.reduce((sum, p) => sum + p.precio * p.cantidad, 0));
-
-const descuento = computed(() => productos.value.reduce((sum, p) => sum + p.descuento, 0));
-
-const iva = computed(() => subtotal.value * 0.16);
-const total = computed(() => subtotal.value - descuento.value + iva.value);
-const pendiente = computed(() => total.value);
 
 onMounted(async () => {
   const storedUser = localStorage.getItem("user");
@@ -155,8 +134,6 @@ onMounted(async () => {
     try {
       user.value = JSON.parse(storedUser);
       console.log("Usuario cargado:", user.value);
-
-      // Usuario cargado correctamente
     } catch (e) {
       console.error("Error al parsear datos del usuario:", e);
     }
@@ -164,16 +141,11 @@ onMounted(async () => {
 
   if (storedToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  } else {
+    showAlert("Inicie sesión para continuar", "warning");
   }
+
+  // Cargar ventas
+  await loadSales();
 });
 </script>
-
-<style scoped>
-#wrapper {
-  min-height: 100vh;
-}
-
-.card-title {
-  font-weight: 600;
-}
-</style>

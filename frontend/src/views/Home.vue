@@ -15,7 +15,7 @@
         <!-- Tarjetas de acceso rápido -->
         <div class="row mb-5 g-3">
           <div class="col-12 col-md-6 col-lg-3">
-            <router-link to="/Sales" class="text-decoration-none">
+            <router-link to="/nueva-venta" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
@@ -90,8 +90,8 @@
                 <div class="card-body">
                   <div class="text-muted small text-uppercase">Ventas hoy</div>
                   <div class="d-flex align-items-center mt-2">
-                    <h3 class="mb-0 fw-bold">$1,250</h3>
-                    <span class="badge bg-success ms-2">+15%</span>
+                    <h3 class="mb-0 fw-bold">${{ totalSales.toFixed(2) }}</h3>
+                    <span class="badge bg-success ms-2">{{ totalSales > 0 ? "+100%" : "0%" }}</span>
                   </div>
                 </div>
               </div>
@@ -102,13 +102,13 @@
                 <div class="card-body">
                   <div class="text-muted small text-uppercase">Transacciones</div>
                   <div class="d-flex align-items-center mt-2">
-                    <h3 class="mb-0 fw-bold">24</h3>
+                    <h3 class="mb-0 fw-bold">{{ totalTransactions }}</h3>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3">
+            <!-- <div class="col-12 col-sm-6 col-lg-3">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                   <div class="text-muted small text-uppercase">Productos Bajo Stock</div>
@@ -129,7 +129,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </template>
 
@@ -169,7 +169,7 @@
         </template>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script setup>
@@ -181,28 +181,42 @@ const user = ref({
   username: "Usuario",
   role: ""
 });
+const totalSales = ref(0);
+const totalTransactions = ref(0);
 
 onMounted(async () => {
   const storedUser = localStorage.getItem("user");
   const storedToken = localStorage.getItem("authToken");
 
-  if (storedUser) {
+  if (storedUser && storedToken) {
     try {
       user.value = JSON.parse(storedUser);
       // Configurar token para futuras peticiones
     } catch (e) {
       console.error("Error al parsear datos del usuario:", e);
     }
-  }
-  if (storedToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+
+    try {
+      const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`);
+      const sales = response.data.data;
+      totalSales.value = calculateTotalSales(sales);
+      totalTransactions.value = calculateTotalTransactions(sales);
+    } catch (error) {
+      console.error("Error al cargar ventas:", error);
+    }
   }
 });
+
+const calculateTotalSales = (sales) => {
+  return sales.reduce((total, sale) => total + sale.total, 0);
+};
+const calculateTotalTransactions = (sales) => {
+  return sales.length;
+};
 </script>
 
 <style>
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css");
-
 #wrapper {
   min-height: 100vh;
 }

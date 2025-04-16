@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <Sidebar :user="user" />
 
-    <div id="page-content-wrapper" class="flex-grow-1 bg-light cntainer-fluid p-4">
+    <div id="page-content-wrapper" class="flex-grow-1 bg-light p-4">
       <h2 class="fw-bold">Inventario de Artículos</h2>
 
       <!-- Alerta para mostrar mensajes -->
@@ -13,9 +13,8 @@
       </div>
 
       <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-          <h6 class="m-0 fw-bold">Lista de Artículos</h6>
-          <button class="btn btn-primary btn-sm" @click="openAddModal">
+        <div class="card-header py-3 d-flex">
+          <button class="btn btn-primary btn-sm ms-auto" @click="openAddModal">
             <i class="bi bi-plus-circle me-1"></i> Nuevo Artículo
           </button>
         </div>
@@ -27,7 +26,24 @@
             :options="{
               responsive: true,
               language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
+                sProcessing: 'Procesando...',
+                sLengthMenu: 'Mostrar _MENU_ registros',
+                sZeroRecords: 'No se encontraron resultados',
+                sEmptyTable: 'Ningún dato disponible en esta tabla',
+                sInfo: 'Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros',
+                sInfoEmpty: 'Mostrando registros del 0 al 0 de un total de 0 registros',
+                sInfoFiltered: '(filtrado de un total de _MAX_ registros)',
+                sSearch: 'Buscar:',
+                sInfoThousands: ',',
+                sLoadingRecords: 'Cargando...',
+                oAria: {
+                  sSortAscending: ': Activar para ordenar la columna de manera ascendente',
+                  sSortDescending: ': Activar para ordenar la columna de manera descendente'
+                },
+                buttons: {
+                  copy: 'Copiar',
+                  colvis: 'Visibilidad'
+                }
               }
             }"
           >
@@ -76,16 +92,105 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal para Agregar/Editar Producto -->
+    <div
+      class="modal fade"
+      id="productModal"
+      tabindex="-1"
+      aria-labelledby="productModalLabel"
+      aria-hidden="true"
+      ref="modalElement"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">
+              {{ selectedItem ? "Editar Artículo" : "Nuevo Artículo" }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="selectedItem ? updateItem() : addItem()">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="description" class="form-label">Descripción</label>
+                  <input type="text" class="form-control" id="description" v-model="formItem.description" required />
+                </div>
+                <div class="col-md-6">
+                  <label for="category" class="form-label">Categoría</label>
+                  <select class="form-select" id="category" v-model="formItem.category_id" required>
+                    <option value="" disabled selected>Selecciona una categoría</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                      {{ category.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="code" class="form-label">Código</label>
+                  <input type="text" class="form-control" id="code" v-model="formItem.code" required />
+                </div>
+                <div class="col-md-6">
+                  <label for="barcode" class="form-label">Código de Barras</label>
+                  <input type="text" class="form-control" id="barcode" v-model="formItem.barcode" />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="price" class="form-label">Precio de Venta ($)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="price"
+                    v-model="formItem.price"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4">
+                  <label for="cost" class="form-label">Costo ($)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="cost"
+                    v-model="formItem.cost"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4">
+                  <label for="stock" class="form-label">Existencias</label>
+                  <input type="number" class="form-control" id="stock" v-model="formItem.stock" min="0" required />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" @click="selectedItem ? updateItem() : addItem()">
+              {{ selectedItem ? "Actualizar" : "Guardar" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import { Modal } from "bootstrap";
 
 DataTable.use(DataTablesCore);
 
@@ -96,6 +201,20 @@ const alertType = ref("info"); // success, danger, warning, info
 const user = ref({
   username: "Usuario",
   role: ""
+});
+const categories = ref([]);
+const modalElement = ref(null);
+let productModal = null;
+
+// Objeto reactivo para el formulario
+const formItem = reactive({
+  description: "",
+  category_id: "",
+  code: "",
+  barcode: "",
+  price: 0,
+  cost: 0,
+  stock: 0
 });
 
 const columns = [
@@ -125,22 +244,52 @@ const closeAlert = () => {
 
 const loadInventory = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/admin/articles");
-    data.value = response.data;
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`);
+    data.value = response.data.data;
   } catch (error) {
     console.error("Error al cargar artículos:", error);
     showAlert("No se pudieron cargar los artículos. Inténtalo nuevamente.", "danger");
   }
 };
 
+const loadCategories = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/categories`);
+    categories.value = response.data.data;
+  } catch (error) {
+    console.error("Error al cargar categorías:", error);
+    showAlert("No se pudieron cargar las categorías. Inténtalo nuevamente.", "danger");
+  }
+};
+
+const resetForm = () => {
+  formItem.description = "";
+  formItem.category_id = "";
+  formItem.code = "";
+  formItem.barcode = "";
+  formItem.price = 0;
+  formItem.cost = 0;
+  formItem.stock = 0;
+};
+
 const openAddModal = () => {
   selectedItem.value = null;
-  // implementar la lógica para abrir un modal de añadir producto
+  resetForm();
+  productModal.show();
 };
 
 const editItem = (item) => {
   selectedItem.value = { ...item };
-  // implementar la lógica para abrir un modal de edición
+  // Cargar datos del artículo en el formulario
+  formItem.description = item.description;
+  formItem.category_id = item.category_id;
+  formItem.code = item.code;
+  formItem.barcode = item.barcode;
+  formItem.price = item.price;
+  formItem.cost = item.cost;
+  formItem.stock = item.stock;
+
+  productModal.show();
 };
 
 const confirmDelete = (item) => {
@@ -151,7 +300,7 @@ const confirmDelete = (item) => {
 
 const deleteItem = async (itemId) => {
   try {
-    await axios.delete(`http://localhost:3000/api/admin/articles/${itemId}`);
+    await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemId}`);
     showAlert("Artículo eliminado correctamente", "success");
     await loadInventory(); // Recargar la tabla
   } catch (error) {
@@ -160,33 +309,50 @@ const deleteItem = async (itemId) => {
   }
 };
 
+const addItem = async () => {
+  try {
+    await axios.post(`http://localhost:3000/api/${user.value.role}/articles`, formItem);
+    showAlert("Artículo agregado correctamente", "success");
+    await loadInventory(); // Recargar la tabla
+    productModal.hide(); // Cerrar modal
+  } catch (error) {
+    console.error("Error al agregar artículo:", error);
+    showAlert("No se pudo agregar el artículo. Verifica los datos e inténtalo nuevamente.", "danger");
+  }
+};
+
+const updateItem = async () => {
+  try {
+    await axios.put(`http://localhost:3000/api/${user.value.role}/articles/${selectedItem.value.id}`, formItem);
+    showAlert("Artículo actualizado correctamente", "success");
+    await loadInventory(); // Recargar la tabla
+    productModal.hide(); // Cerrar modal
+  } catch (error) {
+    console.error("Error al actualizar artículo:", error);
+    showAlert("No se pudo actualizar el artículo. Verifica los datos e inténtalo nuevamente.", "danger");
+  }
+};
+
 onMounted(async () => {
   const storedUser = localStorage.getItem("user");
   const storedToken = localStorage.getItem("authToken");
 
-  if (storedUser) {
+  if (storedUser && storedToken) {
     try {
       user.value = JSON.parse(storedUser);
-      console.log("Usuario cargado:", user.value);
-      
-      // Usuario cargado correctamente
     } catch (e) {
       console.error("Error al parsear datos del usuario:", e);
     }
-  }
-
-  if (storedToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-  } else {
-    // Si no hay token, podrías redirigir al login o mostrar un mensaje
-    showAlert("No se ha iniciado sesión. Algunas funciones podrían estar limitadas.", "warning");
-  }
 
-  try {
-    const response = await axios.get("http://localhost:3000/api/admin/articles");
-    if (response.data) {
-      data.value = response.data.data;
-    }
-  } catch (error) {}
+    // Inicializar el modal de Bootstrap
+    productModal = new Modal(modalElement.value);
+
+    // Cargar categorías y artículos
+    await loadCategories();
+    await loadInventory();
+  } else {
+    showAlert("Inicie sesión para continuar", "warning");
+  }
 });
 </script>
