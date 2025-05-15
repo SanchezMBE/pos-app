@@ -57,7 +57,7 @@
               <div class="mb-4">
                 <div class="d-flex justify-content-between">
                   <label for="password" class="form-label">Contraseña</label>
-                  <a href="/recover-password" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
+                  <a href="/recuperar-password" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0">

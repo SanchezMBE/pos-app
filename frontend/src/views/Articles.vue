@@ -78,10 +78,10 @@
                 </td>
                 <td>
                   <div class="btn-group btn-group-sm">
-                    <button @click="editItem(item)" class="btn btn-info">
+                    <button @click="editItem(item)" class="btn btn-info" title="Editar">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <button @click="confirmDelete(item)" class="btn btn-danger">
+                    <button @click="openDeleteModal(item)" class="btn btn-danger" title="Eliminar">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
@@ -131,11 +131,43 @@
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="code" class="form-label">Código</label>
-                  <input type="text" class="form-control" id="code" v-model="formItem.code" required />
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="code"
+                    v-model="formItem.code"
+                    required
+                    @input="validateCode"
+                  />
+                  <div class="form-text text-danger" v-if="errors.codeExists">
+                    Este código ya existe en la base de datos.
+                  </div>
+                  <div class="form-text text-danger" v-if="errors.codeDuplicate">
+                    El código no puede ser igual al código de barras.
+                  </div>
                 </div>
                 <div class="col-md-6">
                   <label for="barcode" class="form-label">Código de Barras</label>
-                  <input type="text" class="form-control" id="barcode" v-model="formItem.barcode" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="barcode"
+                    v-model="formItem.barcode"
+                    maxlength="13"
+                    @input="validateBarcode"
+                  />
+                  <div class="form-text text-danger" v-if="errors.barcodeFormat">
+                    El código de barras debe contener solo números.
+                  </div>
+                  <div class="form-text text-danger" v-if="errors.barcodeLength">
+                    El código de barras debe tener máximo 13 caracteres.
+                  </div>
+                  <div class="form-text text-danger" v-if="errors.barcodeDuplicate">
+                    El código de barras no puede ser igual al código.
+                  </div>
+                  <div class="form-text text-danger" v-if="errors.barcodeExists">
+                    Este código de barras ya existe en la base de datos.
+                  </div>
                 </div>
               </div>
 
@@ -173,8 +205,47 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary" @click="selectedItem ? updateItem() : addItem()">
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="selectedItem ? updateItem() : addItem()"
+              :disabled="hasErrors"
+            >
               {{ selectedItem ? "Actualizar" : "Guardar" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Confirmar Eliminación -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+      ref="deleteModalElement"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0">
+              ¿Estás seguro de eliminar el artículo "<strong>{{ itemToDelete ? itemToDelete.description : "" }}</strong
+              >"?
+            </p>
+            <p class="text-danger mt-3 mb-0">
+              <i class="bi bi-exclamation-triangle me-2"></i>Esta acción no se puede deshacer.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger" @click="confirmDeleteItem">
+              <i class="bi bi-trash me-1"></i>Eliminar
             </button>
           </div>
         </div>
@@ -184,7 +255,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, computed } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
 import DataTable from "datatables.net-vue3";
@@ -196,6 +267,7 @@ DataTable.use(DataTablesCore);
 
 const data = ref([]);
 const selectedItem = ref(null);
+const itemToDelete = ref(null);
 const alertMessage = ref("");
 const alertType = ref("info"); // success, danger, warning, info
 const user = ref({
@@ -204,7 +276,24 @@ const user = ref({
 });
 const categories = ref([]);
 const modalElement = ref(null);
+const deleteModalElement = ref(null);
 let productModal = null;
+let deleteModal = null;
+
+// Objeto para manejar errores de validación
+const errors = reactive({
+  codeExists: false,
+  barcodeExists: false,
+  codeDuplicate: false,
+  barcodeDuplicate: false,
+  barcodeFormat: false,
+  barcodeLength: false
+});
+
+// Calcular si hay errores para deshabilitar el botón de guardar
+const hasErrors = computed(() => {
+  return Object.values(errors).some((value) => value === true);
+});
 
 // Objeto reactivo para el formulario
 const formItem = reactive({
@@ -227,6 +316,65 @@ const columns = [
   { data: "stock" },
   { data: null, defaultContent: "", orderable: false }
 ];
+
+// Validar que el código no esté duplicado
+const validateCode = async () => {
+  // Validar que el código no sea igual al código de barras
+  errors.codeDuplicate = formItem.code !== "" && formItem.code === formItem.barcode;
+
+  // Validar que el código no exista ya en la base de datos
+  if (formItem.code && (!selectedItem.value || formItem.code !== selectedItem.value.code)) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/${user.value.role}/articles/check-code/${formItem.code}`
+      );
+      errors.codeExists = response.data.exists;
+    } catch (error) {
+      console.error("Error al verificar código:", error);
+    }
+  } else {
+    errors.codeExists = false;
+  }
+};
+
+// Validar código de barras
+const validateBarcode = () => {
+  if (formItem.barcode) {
+    // Validar que sea sólo números
+    errors.barcodeFormat = !/^\d*$/.test(formItem.barcode);
+
+    // Validar longitud máxima (aunque ya se limita con maxlength="13")
+    errors.barcodeLength = formItem.barcode.length > 13;
+
+    // Validar que no sea igual al código
+    errors.barcodeDuplicate = formItem.barcode !== "" && formItem.barcode === formItem.code;
+
+    // Validar que no exista ya en la base de datos
+    checkBarcodeExists();
+  } else {
+    // Reiniciar errores si está vacío
+    errors.barcodeFormat = false;
+    errors.barcodeLength = false;
+    errors.barcodeDuplicate = false;
+    errors.barcodeExists = false;
+  }
+};
+
+// Verificar si el código de barras ya existe
+const checkBarcodeExists = async () => {
+  if (formItem.barcode && (!selectedItem.value || formItem.barcode !== selectedItem.value.barcode)) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/${user.value.role}/articles/check-barcode/${formItem.barcode}`
+      );
+      errors.barcodeExists = response.data.exists;
+    } catch (error) {
+      console.error("Error al verificar código de barras:", error);
+    }
+  } else {
+    errors.barcodeExists = false;
+  }
+};
 
 const showAlert = (message, type = "info") => {
   alertMessage.value = message;
@@ -270,6 +418,11 @@ const resetForm = () => {
   formItem.price = 0;
   formItem.cost = 0;
   formItem.stock = 0;
+
+  // Resetear errores
+  Object.keys(errors).forEach((key) => {
+    errors[key] = false;
+  });
 };
 
 const openAddModal = () => {
@@ -289,27 +442,49 @@ const editItem = (item) => {
   formItem.cost = item.cost;
   formItem.stock = item.stock;
 
+  // Resetear errores
+  Object.keys(errors).forEach((key) => {
+    errors[key] = false;
+  });
+
   productModal.show();
 };
 
-const confirmDelete = (item) => {
-  if (confirm(`¿Estás seguro de eliminar el artículo "${item.description}"?`)) {
-    deleteItem(item.id);
+// Abrir modal de confirmación para eliminar
+const openDeleteModal = (item) => {
+  itemToDelete.value = { ...item };
+  deleteModal.show();
+};
+
+// Confirmar eliminación desde el modal
+const confirmDeleteItem = async () => {
+  if (itemToDelete.value) {
+    try {
+      await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemToDelete.value.id}`);
+      showAlert("Artículo eliminado correctamente", "success");
+      await loadInventory(); // Recargar la tabla
+      deleteModal.hide(); // Cerrar modal de confirmación
+    } catch (error) {
+      console.error("Error al eliminar artículo:", error);
+      showAlert("No se pudo eliminar el artículo. Inténtalo nuevamente.", "danger");
+    }
   }
 };
 
-const deleteItem = async (itemId) => {
-  try {
-    await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemId}`);
-    showAlert("Artículo eliminado correctamente", "success");
-    await loadInventory(); // Recargar la tabla
-  } catch (error) {
-    console.error("Error al eliminar artículo:", error);
-    showAlert("No se pudo eliminar el artículo. Inténtalo nuevamente.", "danger");
-  }
+const validateForm = () => {
+  // Validar código y código de barras
+  validateCode();
+  validateBarcode();
+
+  return !hasErrors.value;
 };
 
 const addItem = async () => {
+  if (!validateForm()) {
+    showAlert("Por favor, corrige los errores en el formulario", "warning");
+    return;
+  }
+
   try {
     await axios.post(`http://localhost:3000/api/${user.value.role}/articles`, formItem);
     showAlert("Artículo agregado correctamente", "success");
@@ -322,6 +497,11 @@ const addItem = async () => {
 };
 
 const updateItem = async () => {
+  if (!validateForm()) {
+    showAlert("Por favor, corrige los errores en el formulario", "warning");
+    return;
+  }
+
   try {
     await axios.put(`http://localhost:3000/api/${user.value.role}/articles/${selectedItem.value.id}`, formItem);
     showAlert("Artículo actualizado correctamente", "success");
@@ -345,8 +525,9 @@ onMounted(async () => {
     }
     axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
 
-    // Inicializar el modal de Bootstrap
+    // Inicializar los modales de Bootstrap
     productModal = new Modal(modalElement.value);
+    deleteModal = new Modal(deleteModalElement.value);
 
     // Cargar categorías y artículos
     await loadCategories();

@@ -50,7 +50,7 @@
             <p class="lead mb-4">
               Gestiona tu inventario, ventas y finanzas de manera eficiente con
               nuestro sistema integral diseñado específicamente para tiendas de
-              conveniencia
+              conveniencia.
             </p>
             <div class="d-flex gap-3">
               <router-link to="/signup" class="btn btn-light btn-lg px-4">

@@ -9,15 +9,6 @@
 
         <!-- Cantidad y Artículo -->
         <div class="row g-3 align-items-end">
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Cantidad</label>
-            <div class="input-group">
-              <button class="btn btn-outline-secondary" @click="cantidad = Math.max(1, cantidad - 1)">-</button>
-              <input v-model.number="cantidad" type="number" min="1" class="form-control text-center" />
-              <button class="btn btn-outline-secondary" @click="cantidad++">+</button>
-            </div>
-          </div>
-
           <div class="col-md-8">
             <label for="searchInput" class="form-label fw-bold">Artículo</label>
             <div class="input-group">
@@ -47,16 +38,6 @@
                 <small class="text-muted">{{ article.barcode }} | Código: {{ article.code }} | Stock: {{ article.stock }}</small>
               </div>
             </div>
-          </div>
-
-          <div class="col-md-2">
-            <button
-              class="btn btn-success btn-lg w-100"
-              @click="agregarArticulo"
-              :disabled="!articuloSeleccionado || cantidad <= 0"
-            >
-              <i class="bi bi-cart-plus me-2"></i> Agregar
-            </button>
           </div>
         </div>
 
