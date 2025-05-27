@@ -76,15 +76,6 @@
                 </div>
               </div>
 
-              <!--
-              <div class="form-check mb-4">
-                <input class="form-check-input" type="checkbox" id="remember" v-model="rememberMe">
-                <label class="form-check-label" for="remember">
-                  Recordar mi sesión
-                </label>
-              </div>
-              -->
-
               <p v-if="errMsg" class="alert alert-danger py-2">{{ errMsg }}</p>
 
               <button @click="login" class="btn btn-primary w-100 py-2 mb-3" :disabled="isLoading">
