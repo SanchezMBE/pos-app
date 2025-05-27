@@ -1,44 +1,82 @@
 <template>
-  <div class="container py-4">
-    <div class="row">
-      <!-- Tabla de billetes y monedas (ahora a la izquierda) -->
-      <div class="col-md-8 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title fw-bold mb-3">Apertura de Caja</h5>
-            <table class="table table-bordered align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th>Tipo</th>
-                  <th>Denominación</th>
-                  <th>Cantidad</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in denominaciones" :key="index">
-                  <td>{{ item.tipo }}</td>
-                  <td>${{ item.valor.toFixed(2) }}</td>
-                  <td>
-                    <input type="number" min="0" class="form-control" v-model.number="item.cantidad" />
-                  </td>
-                  <td>${{ (item.valor * item.cantidad).toFixed(2) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <Sidebar :user="user" />
 
-      <!-- Resumen a la derecha -->
-      <div class="col-md-4">
-        <div class="card bg-light shadow-sm">
+    <div id="page-content-wrapper" class="flex-grow-1 bg-light p-4">
+      <div class="card-body">
+        <h2 class="fw-bold">Apertura de Caja</h2>
+
+        <div class="card shadow-lg border-0">
           <div class="card-body">
-            <h5 class="fw-bold mb-3">Resumen de Apertura</h5>
-            <p class="fs-4">Total: <strong>${{ totalApertura.toFixed(2) }}</strong></p>
-            <button class="btn btn-primary w-100 mt-3" @click="abrirCaja">
-              <i class="bi bi-box-arrow-in-right me-2"></i> Abrir Caja
-            </button>
+
+            <div class="row justify-content-center">
+              <!-- Columna de billetes -->
+              <div class="col-12 col-md-4">
+                <h5 class="mb-3">Billetes</h5>
+                <div
+                  v-for="(denom, i) in billetes"
+                  :key="'billete-' + i"
+                  class="input-group mb-3"
+                >
+                  <span class="input-group-text">{{ denom.etiqueta }}</span>
+                  <input
+                    v-model.number="denom.cantidad"
+                    type="number"
+                    class="form-control"
+                    min="0"
+                  />
+                  <span
+                    class="input-group-text bg-light text-muted"
+                    style="min-width: 90px;"
+                  >
+                    ${{ (denom.valor * denom.cantidad).toFixed(2) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Columna de monedas -->
+              <div class="col-12 col-md-4">
+                <h5 class="mb-3">Monedas</h5>
+                <div
+                  v-for="(denom, i) in monedas"
+                  :key="'moneda-' + i"
+                  class="input-group mb-3"
+                >
+                  <span class="input-group-text">{{ denom.etiqueta }}</span>
+                  <input
+                    v-model.number="denom.cantidad"
+                    type="number"
+                    class="form-control"
+                    min="0"
+                  />
+                  <span
+                    class="input-group-text bg-light text-muted"
+                    style="min-width: 90px;"
+                  >
+                    ${{ (denom.valor * denom.cantidad).toFixed(2) }}
+                  </span>
+                </div>
+
+                <!-- Total abajo de monedas -->
+                <div class="total-amount mt-3">
+                  <h4>Total: ${{ total.toFixed(2) }}</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="row mt-4">
+              <div class="col-12 text-end">
+                <button
+                  class="btn btn-success btn-lg px-4 py-2"
+                  @click="guardarApertura"
+                >
+                  <i class="bi bi-check-circle me-1"></i> Guardar Apertura
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -47,35 +85,93 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from "vue";
+import Sidebar from "@/components/Sidebar.vue";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
-const denominaciones = ref([
-  { tipo: 'Billete', valor: 1000, cantidad: 0 },
-  { tipo: 'Billete', valor: 500, cantidad: 0 },
-  { tipo: 'Billete', valor: 200, cantidad: 0 },
-  { tipo: 'Billete', valor: 100, cantidad: 0 },
-  { tipo: 'Billete', valor: 50, cantidad: 0 },
-  { tipo: 'Billete', valor: 20, cantidad: 0 },
-  { tipo: 'Moneda', valor: 10, cantidad: 0 },
-  { tipo: 'Moneda', valor: 5, cantidad: 0 },
-  { tipo: 'Moneda', valor: 2, cantidad: 0 },
-  { tipo: 'Moneda', valor: 1, cantidad: 0 },
-  { tipo: 'Moneda', valor: 0.5, cantidad: 0 },
+const user = ref({ username: "Usuario", role: "" });
+
+onMounted(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser);
+    } catch {}
+  }
+});
+
+// Definimos billetes y monedas por separado
+const billetes = ref([
+  { etiqueta: "$1000", valor: 1000, cantidad: 0 },
+  { etiqueta: "$500", valor: 500, cantidad: 0 },
+  { etiqueta: "$200", valor: 200, cantidad: 0 },
+  { etiqueta: "$100", valor: 100, cantidad: 0 },
+  { etiqueta: "$50", valor: 50, cantidad: 0 },
+  { etiqueta: "$20", valor: 20, cantidad: 0 },
+  { etiqueta: "$10", valor: 10, cantidad: 0 },
 ]);
 
-const totalApertura = computed(() =>
-  denominaciones.value.reduce((acc, item) => acc + item.valor * item.cantidad, 0)
-);
+const monedas = ref([
+  { etiqueta: "$5", valor: 5, cantidad: 0 },
+  { etiqueta: "$2", valor: 2, cantidad: 0 },
+  { etiqueta: "$1", valor: 1, cantidad: 0 },
+  { etiqueta: "$0.50", valor: 0.5, cantidad: 0 },
+]);
 
-const abrirCaja = () => {
-  alert(`Caja abierta con: $${totalApertura.value.toFixed(2)}`);
+const total = computed(() => {
+  const sumaBilletes = billetes.value.reduce(
+    (sum, d) => sum + d.valor * d.cantidad,
+    0
+  );
+  const sumaMonedas = monedas.value.reduce(
+    (sum, d) => sum + d.valor * d.cantidad,
+    0
+  );
+  return sumaBilletes + sumaMonedas;
+});
+
+const guardarApertura = () => {
+  if (total.value === 0) {
+    alert("El total no puede ser cero.");
+    return;
+  }
+
+  const datosApertura = {
+    fecha: new Date().toISOString(),
+    total: total.value,
+    desglose: [...billetes.value, ...monedas.value],
+  };
+
+  console.log("Apertura guardada:", datosApertura);
+  alert("Apertura de caja guardada con éxito.");
+  // Aquí puedes hacer un POST a backend si quieres
 };
 </script>
 
 <style scoped>
-.table th,
-.table td {
-  vertical-align: middle;
+#wrapper {
+  min-height: 100vh;
+}
+.card {
+  border-radius: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+.input-group-text {
+  min-width: 80px;
+  justify-content: center;
+}
+
+/* Fondo verde suave para total */
+.total-amount {
+  background-color: #d4edda; /* verde suave */
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: #155724; /* verde oscuro para texto */
+  font-weight: 600;
   text-align: center;
 }
 </style>
