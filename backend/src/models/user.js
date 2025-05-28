@@ -89,6 +89,21 @@ export class User {
     }
   }
 
+  static async updatePassword({ id, password, businessId }) {
+    try {
+      const [result] = await db.query("UPDATE user SET password = ? WHERE id = ? AND business_id = ?", [
+        password,
+        id,
+        businessId
+      ]);
+
+      if (result.affectedRows === 0) return null;
+      return { id, password };
+    } catch (error) {
+      throw new Error(`Error updating user password: ${error.message}`);
+    }
+  }
+
   static async delete({ id, businessId }) {
     try {
       const [result] = await db.query("DELETE FROM user WHERE id = ? AND business_id = ?", [id, businessId]);
