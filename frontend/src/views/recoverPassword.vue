@@ -32,7 +32,7 @@
             </a>
             <h1 class="h3 mb-3 fw-bold">Recuperar contraseña</h1>
             <p class="text-muted" v-if="!codeSent && !resetSuccess">
-              Ingresa tu nombre de usuario para recibir instrucciones de recuperación
+              Ingresa tu nombre de usuario para recibir el código de recuperación por correo electrónico
             </p>
           </div>
 
@@ -56,19 +56,12 @@
                   </div>
                 </div>
 
-                <!-- Debug info para pruebas -->
-                <div v-if="debugMode" class="alert alert-info mb-3">
-                  <small>
-                    <strong>Modo prueba:</strong> Cualquier usuario es válido. Se generará un código: 123456
-                  </small>
-                </div>
-
                 <p v-if="errMsg" class="alert alert-danger py-2">{{ errMsg }}</p>
                 <p v-if="successMsg" class="alert alert-success py-2">{{ successMsg }}</p>
 
                 <button @click="requestRecovery" class="btn btn-primary w-100 py-2 mb-3" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  Enviar instrucciones
+                  Enviar código de recuperación
                 </button>
               </div>
 
@@ -95,10 +88,6 @@
                       placeholder="Ingresa el código recibido"
                       v-model="recoveryCode"
                     />
-                  </div>
-                  <!-- Debug info para pruebas -->
-                  <div v-if="debugMode" class="mt-1">
-                    <small class="text-muted"> Código de prueba: <strong>123456</strong> </small>
                   </div>
                 </div>
 
@@ -200,19 +189,10 @@
 
               <div class="mt-4 text-center" v-if="!resetSuccess">
                 <p class="mb-0">
-                  <a href="#" @click.prevent="goToLogin" class="text-decoration-none">
+                  <a href="/login" class="text-decoration-none">
                     <i class="bi bi-arrow-left me-1"></i> Volver al inicio de sesión
                   </a>
                 </p>
-              </div>
-
-              <!-- Toggle modo debug -->
-              <div class="mt-3 text-center">
-                <small>
-                  <a href="#" @click.prevent="toggleDebug" class="text-muted">
-                    {{ debugMode ? "Ocultar ayuda de prueba" : "Mostrar ayuda de prueba" }}
-                  </a>
-                </small>
               </div>
             </div>
           </div>
@@ -225,6 +205,8 @@
 <script setup>
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
 const username = ref("");
 const recoveryCode = ref("");
@@ -237,7 +219,7 @@ const showConfirmPassword = ref(false);
 const isLoading = ref(false);
 const codeSent = ref(false);
 const resetSuccess = ref(false);
-const debugMode = ref(true); // Activar modo debug por defecto
+const router = useRouter();
 
 // Variables para validación en tiempo real
 const passwordValidated = ref(false);
@@ -246,11 +228,6 @@ const minLength = ref(false);
 const hasNumber = ref(false);
 const hasSpecial = ref(false);
 const passwordsMatch = ref(false);
-
-// Cambiar el estado del modo debug
-const toggleDebug = () => {
-  debugMode.value = !debugMode.value;
-};
 
 // Validar la contraseña a medida que el usuario escribe
 const validatePassword = () => {
@@ -282,7 +259,7 @@ const passwordValid = computed(() => {
   return minLength.value && hasNumber.value && hasSpecial.value;
 });
 
-// Simulación del paso 1: Solicitar código de recuperación
+// Paso 1: Solicitar código de recuperación
 const requestRecovery = async () => {
   if (!username.value) {
     errMsg.value = "Por favor, ingresa tu nombre de usuario";
@@ -293,22 +270,43 @@ const requestRecovery = async () => {
   errMsg.value = "";
   successMsg.value = "";
 
-  // Simulación de tiempo de respuesta del servidor
-  setTimeout(() => {
-    // Simulación de respuesta exitosa
-    successMsg.value = "Se han enviado las instrucciones de recuperación a tu correo electrónico";
+  try {
+    // Realizar petición al backend para solicitar recuperación
+    const response = await axios.post("/api/auth/password-recovery", {
+      username: username.value
+    });
 
-    // Después de 2 segundos, pasar al siguiente paso
+    // Si la solicitud es exitosa, mostrar mensaje de éxito
+    successMsg.value = "Se han enviado las instrucciones de recuperación a tu correo electrónico";
     setTimeout(() => {
       codeSent.value = true;
       successMsg.value = "";
     }, 2000);
+  } catch (error) {
+    console.error("Error al solicitar recuperación:", error);
 
+    if (error.response) {
+      switch (error.response.status) {
+        case 404:
+          errMsg.value = "No se encontró ninguna cuenta con este nombre de usuario";
+          break;
+        case 429:
+          errMsg.value = "Demasiadas solicitudes. Inténtalo más tarde";
+          break;
+        default:
+          errMsg.value = "Error en el servidor. Inténtalo más tarde";
+      }
+    } else if (error.request) {
+      errMsg.value = "No se pudo conectar con el servidor";
+    } else {
+      errMsg.value = "Error al procesar la solicitud";
+    }
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
 };
 
-// Simulación del paso 2: Restablecer contraseña con código
+// Paso 2: Restablecer contraseña con código
 const resetPassword = async () => {
   errMsg.value = "";
 
@@ -336,33 +334,43 @@ const resetPassword = async () => {
 
   isLoading.value = true;
 
-  // Simulación de tiempo de respuesta del servidor
-  setTimeout(() => {
-    if (recoveryCode.value === "123456") {
-      // Código correcto, mostrar éxito
-      resetSuccess.value = true;
-    } else {
-      // Código incorrecto, mostrar error
-      errMsg.value = "Código de recuperación inválido o expirado";
-    }
+  try {
+    // Realizar petición al backend para cambiar la contraseña
+    const response = await axios.post("/api/auth/reset-password", {
+      username: username.value,
+      recoveryCode: recoveryCode.value,
+      newPassword: newPassword.value
+    });
 
+    // Si la respuesta es exitosa, mostrar confirmación
+    resetSuccess.value = true;
+  } catch (error) {
+    console.error("Error al restablecer contraseña:", error);
+
+    if (error.response) {
+      switch (error.response.status) {
+        case 400:
+          errMsg.value = "Código de recuperación inválido o expirado";
+          break;
+        case 404:
+          errMsg.value = "Usuario no encontrado";
+          break;
+        default:
+          errMsg.value = "Error en el servidor. Inténtalo más tarde";
+      }
+    } else if (error.request) {
+      errMsg.value = "No se pudo conectar con el servidor";
+    } else {
+      errMsg.value = "Error al procesar la solicitud";
+    }
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
 };
 
-// Redireccionar al login (simulado)
+// Redireccionar al login
 const goToLogin = () => {
-  // En modo de prueba, reiniciamos el formulario para empezar de nuevo
-  codeSent.value = false;
-  resetSuccess.value = false;
-  username.value = "";
-  recoveryCode.value = "";
-  newPassword.value = "";
-  confirmPassword.value = "";
-  errMsg.value = "";
-  successMsg.value = "";
-  passwordValidated.value = false;
-  confirmValidated.value = false;
+  router.push("/login");
 };
 
 import { onMounted } from "vue";

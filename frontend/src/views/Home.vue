@@ -15,15 +15,15 @@
         <!-- Tarjetas de acceso rápido -->
         <div class="row mb-5 g-3">
           <div class="col-12 col-md-6 col-lg-3">
-            <router-link to="/nueva-venta" class="text-decoration-none">
+            <router-link to="/apertura-caja" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10"
                   >
-                    <i class="bi bi-cart text-primary" style="font-size: 2rem"></i>
+                    <i class="bi bi-cash-coin text-primary" style="font-size: 2rem"></i>
                   </div>
-                  <h5 class="card-title">Nueva Venta</h5>
+                  <h5 class="card-title">Apertura De Caja</h5>
                 </div>
               </div>
             </router-link>
@@ -60,7 +60,7 @@
           </div>
 
           <div class="col-12 col-md-6 col-lg-3" v-if="user.role === 'admin'">
-            <router-link to="/boxcut" class="text-decoration-none">
+            <router-link to="/corte-caja" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
