@@ -455,7 +455,7 @@ const register = async () => {
       const token = response.data.data.token;
       const user = response.data.data.user;
       console.log(token, user);
-    
+
       // Guardar información del usuario y el token
       localStorage.setItem("authToken", token);
       localStorage.setItem("user", JSON.stringify(user));

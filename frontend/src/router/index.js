@@ -13,7 +13,7 @@ const router = createRouter({
     { path: "/historial-ventas", component: () => import("../views/SalesHistory.vue") },
     { path: "/registros-turnos", component: () => import("../views/ShiftRecord.vue") },
     { path: "/corte-caja", component: () => import("../views/CloseShift.vue") },
-    { path: "/apertura-caja", component: () => import("../views/OpenShift.vue") },
+    { path: "/perfil", component: () => import("../views/Perfil.vue") },
     { path: "/usuarios", component: () => import("../views/Users.vue") }
   ]
 });
