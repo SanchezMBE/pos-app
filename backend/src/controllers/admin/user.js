@@ -35,6 +35,7 @@ export class UserController {
       const updatedUser = await User.update({
         id,
         userData,
+
         businessId
       });
 
