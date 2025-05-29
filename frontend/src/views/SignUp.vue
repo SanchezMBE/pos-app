@@ -343,7 +343,7 @@ const router = useRouter();
 
 // Verificación en tiempo real para contraseña
 watch(password, (newValue) => {
-  passwordRequirements.length = newValue.length >= 6;
+  passwordRequirements.length = newValue.length >= 8;
   passwordRequirements.number = /[0-9]/.test(newValue);
   passwordRequirements.special = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newValue);
 
@@ -353,7 +353,7 @@ watch(password, (newValue) => {
     passwordStrength.value = "Contraseña fuerte";
   } else {
     let mensaje = "La contraseña debe tener: ";
-    if (!passwordRequirements.length) mensaje += "al menos 6 caracteres, ";
+    if (!passwordRequirements.length) mensaje += "al menos 8 caracteres, ";
     if (!passwordRequirements.number) mensaje += "al menos un número, ";
     if (!passwordRequirements.special) mensaje += "al menos un carácter especial, ";
     passwordStrength.value = mensaje.slice(0, -2); // Quitar la última coma y espacio

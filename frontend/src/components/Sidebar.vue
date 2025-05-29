@@ -28,16 +28,9 @@
           <i class="bi bi-clock-history me-2"></i> Historial de Ventas
         </router-link>
 
-        <router-link to="/registros-turnos" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-receipt-cutoff me-2"></i> Registro de Turnos
-        </router-link>
-
-        <!-- <router-link to="/reportes" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-graph-up me-2"></i> Reportes
-        </router-link> -->
 
         <router-link to="/usuarios" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-people me-2"></i> Usuarios
+          <i class="bi bi-people me-2"></i> Cajeros
         </router-link>
       </template>
     </div>
