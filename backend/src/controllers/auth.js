@@ -55,7 +55,7 @@ export class AuthController {
 
       const token = jwt.sign(
         {
-          id_user: userResult.id,
+          user_id: userResult.id,
           business_id: userResult.business_id,
           role: userResult.role
         },
@@ -119,10 +119,9 @@ export class AuthController {
         });
       }
 
-      // Creación del token JWT
       const token = jwt.sign(
         {
-          id_user: userResult.id,
+          user_id: userResult.id,
           business_id: userResult.business_id,
           role: userResult.role
         },
@@ -190,14 +189,14 @@ export class AuthController {
     try {
       const session = req.session; // Assuming session contains user information
 
-      if (!session || !session.id_user) {
+      if (!session || !session.user_id) {
         return res.status(401).json({
           success: false,
           error: "No autenticado"
         });
       }
 
-      const userResult = await User.findById({ id: session.id_user });
+      const userResult = await User.findById({ id: session.user_id });
       if (!userResult) {
         return res.status(404).json({
           success: false,

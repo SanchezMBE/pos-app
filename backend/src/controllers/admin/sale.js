@@ -11,7 +11,7 @@ export class SaleController {
       return res.status(200).json({
         success: true,
         data: sales,
-        message: "Sales retrieved successfully"
+        message: "Ventas obtenidas correctamente"
       });
     } catch (error) {
       return res.status(400).json({
@@ -25,7 +25,8 @@ export class SaleController {
     try {
       const saleData = req.body;
       const businessId = req.session.business_id;
-      const userId = req.session.id;
+      const userId = req.session.user_id;
+      console.log(req.session);
 
       const newSale = await Sale.create({
         saleData,
@@ -46,7 +47,7 @@ export class SaleController {
       return res.status(201).json({
         success: true,
         data: { ...newSale },
-        message: "Sale created successfully"
+        message: "Venta creada correctamente"
       });
     } catch (error) {
       return res.status(400).json({
