@@ -7,7 +7,7 @@ export const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.session = decoded;
     next();
     // eslint-disable-next-line no-unused-vars
   } catch (error) {

@@ -18,7 +18,7 @@ router.get("/", ArticleController.getAll);
 router.post("/", validateMiddleware(articleSchema), ArticleController.create);
 
 router.get("/:id", ArticleController.getById);
-router.patch("/:id", validateMiddleware(articleSchema.partial()), ArticleController.update);
+router.put("/:id", validateMiddleware(articleSchema.partial()), ArticleController.update);
 router.delete("/:id", ArticleController.delete);
 
 router.get("/code/:code", ArticleController.getByCode);

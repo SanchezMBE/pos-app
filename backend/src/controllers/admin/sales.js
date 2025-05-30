@@ -5,7 +5,7 @@ import { Article } from "../../models/article.js";
 export class SaleController {
   static async getAll(req, res) {
     try {
-      const businessId = req.user.business_id;
+      const businessId = req.session.business_id;
       const sales = await Sale.findAll({ businessId });
 
       return res.status(200).json({
@@ -24,8 +24,8 @@ export class SaleController {
   static async create(req, res) {
     try {
       const saleData = req.body;
-      const businessId = req.user.business_id;
-      const userId = req.user.id;
+      const businessId = req.session.business_id;
+      const userId = req.session.id;
 
       const newSale = await Sale.create({
         saleData,

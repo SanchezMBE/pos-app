@@ -16,7 +16,7 @@ export class UserController {
 
   static async create(req, res) {
     const userData = req.body;
-    const businessId = req.user.business_id;
+    const businessId = req.session.business_id;
 
     const newUser = await User.create({
       userData,
@@ -30,7 +30,7 @@ export class UserController {
     try {
       const { id } = req.params;
       const userData = req.body;
-      const businessId = req.user.business_id;
+      const businessId = req.session.business_id;
 
       const updatedUser = await User.update({
         id,

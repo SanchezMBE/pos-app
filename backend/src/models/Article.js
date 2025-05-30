@@ -95,10 +95,12 @@ export class Article {
 
       return { id: result.insertId, ...articleData };
     } catch (error) {
+      console.log(`Error creating article: ${error.message}`);
+
       if (error.code === "ER_DUP_ENTRY") {
-        if (error.message.includes("code")) {
+        if (error.message.includes(".code")) {
           throw new Error("Code already exists");
-        } else if (error.message.includes("barcode")) {
+        } else if (error.message.includes(".barcode")) {
           throw new Error("Barcode already exists");
         }
       }

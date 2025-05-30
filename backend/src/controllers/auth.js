@@ -54,7 +54,11 @@ export class AuthController {
       });
 
       const token = jwt.sign(
-        { id: userResult.id, business_id: userResult.business_id, role: userResult.role },
+        {
+          id_user: userResult.id,
+          business_id: userResult.business_id,
+          role: userResult.role
+        },
         process.env.JWT_SECRET,
         {
           expiresIn: "1h"
@@ -97,9 +101,9 @@ export class AuthController {
     const { username, password } = req.body;
 
     try {
-      const user = await User.findByName({ username });
+      const userResult = await User.findByName({ username });
 
-      if (!user) {
+      if (!userResult) {
         return res.status(401).json({
           success: false,
           error: "Credenciales inválidas"
@@ -108,7 +112,7 @@ export class AuthController {
 
       const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
 
-      if (user.password !== hashedPassword) {
+      if (userResult.password !== hashedPassword) {
         return res.status(401).json({
           success: false,
           error: "Credenciales inválidas"
@@ -116,9 +120,25 @@ export class AuthController {
       }
 
       // Creación del token JWT
-      const token = jwt.sign({ id: user.id, business_id: user.business_id, role: user.role }, process.env.JWT_SECRET, {
-        expiresIn: "1h"
-      });
+      const token = jwt.sign(
+        {
+          id_user: userResult.id,
+          business_id: userResult.business_id,
+          role: userResult.role
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h"
+        }
+      );
+
+      const businessResult = await Business.findById({ id: userResult.business_id });
+      if (!businessResult) {
+        return res.status(404).json({
+          success: false,
+          error: "Negocio no encontrado"
+        });
+      }
 
       res
         .cookie("access_token", token, {
@@ -129,10 +149,16 @@ export class AuthController {
         .json({
           success: true,
           data: {
+            business: {
+              name: businessResult.name,
+              address: businessResult.address,
+              phone: businessResult.phone,
+              email: businessResult.email
+            },
             user: {
-              username: user.username,
-              full_name: user.full_name,
-              role: user.role
+              username: userResult.username,
+              full_name: userResult.full_name,
+              role: userResult.role
             }
           }
         });
@@ -162,24 +188,44 @@ export class AuthController {
 
   static async getMe(req, res) {
     try {
-      const user = req.user; // User is set by the authentication middleware
+      const session = req.session; // Assuming session contains user information
 
-      if (!user) {
+      if (!session || !session.id_user) {
         return res.status(401).json({
           success: false,
           error: "No autenticado"
         });
       }
 
+      const userResult = await User.findById({ id: session.id_user });
+      if (!userResult) {
+        return res.status(404).json({
+          success: false,
+          error: "Usuario no encontrado"
+        });
+      }
+
+      const businessResult = await Business.findById({ id: userResult.business_id });
+      if (!businessResult) {
+        return res.status(404).json({
+          success: false,
+          error: "Negocio no encontrado"
+        });
+      }
+
       res.json({
         success: true,
         data: {
+          business: {
+            name: businessResult.name,
+            address: businessResult.address,
+            phone: businessResult.phone,
+            email: businessResult.email
+          },
           user: {
-            id: user.id,
-            username: user.username,
-            full_name: user.full_name,
-            role: user.role,
-            business_id: user.business_id
+            username: userResult.username,
+            full_name: userResult.full_name,
+            role: userResult.role
           }
         }
       });

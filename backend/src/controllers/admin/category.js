@@ -4,7 +4,7 @@ export class ArticleController {
   static async getAll(req, res) {
     try {
       const { name } = req.query;
-      const businessId = req.user.business_id;
+      const businessId = req.session.business_id;
 
       const categories = await Category.findAll({ name, businessId });
       return res.status(200).json({
@@ -22,7 +22,7 @@ export class ArticleController {
   static async getById(req, res) {
     try {
       const { id } = req.params;
-      const businessId = req.user.business_id;
+      const businessId = req.session.business_id;
 
       const category = await Category.findById({ id, businessId });
 
