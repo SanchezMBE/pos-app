@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: null,
+    business: null,
     isLoading: false
   }),
   actions: {
@@ -16,6 +17,8 @@ export const useUserStore = defineStore("user", {
 
         if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
         this.user = res.data.data.user;
+        this.business = res.data.data.business;
+        console.log("Fetch user successful:", this.user);
       } catch (error) {
         console.log("Fetch user failed:", error);
         this.user = null;
@@ -36,6 +39,9 @@ export const useUserStore = defineStore("user", {
 
         if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
         this.user = res.data.data.user;
+        this.business = res.data.data.business;
+
+        console.log("business:", this.business);
 
         console.log("Login successful:", this.user);
       } catch (error) {
@@ -49,6 +55,8 @@ export const useUserStore = defineStore("user", {
 
         if (res.status !== 201) throw new Error(`HTTP ${res.status}`);
         this.user = res.data.data.user;
+        this.business = res.data.data.business;
+
         console.log("Signup successful:", this.user);
       } catch (error) {
         // Handle specific error cases

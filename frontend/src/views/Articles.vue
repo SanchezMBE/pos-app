@@ -353,20 +353,6 @@ window.openDeleteModal = (id) => {
 const validateCode = async () => {
   // Validar que el código no sea igual al código de barras
   errors.codeDuplicate = formItem.code !== "" && formItem.code === formItem.barcode;
-
-  // Validar que el código no exista ya en la base de datos
-  if (formItem.code && (!selectedItem.value || formItem.code !== selectedItem.value.code)) {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/${user.value.role}/articles/check-code/${formItem.code}`
-      );
-      errors.codeExists = response.data.exists;
-    } catch (error) {
-      console.error("Error al verificar código:", error);
-    }
-  } else {
-    errors.codeExists = false;
-  }
 };
 
 // Validar código de barras
@@ -380,30 +366,11 @@ const validateBarcode = () => {
 
     // Validar que no sea igual al código
     errors.barcodeDuplicate = formItem.barcode !== "" && formItem.barcode === formItem.code;
-
-    // Validar que no exista ya en la base de datos
-    checkBarcodeExists();
   } else {
     // Reiniciar errores si está vacío
     errors.barcodeFormat = false;
     errors.barcodeLength = false;
     errors.barcodeDuplicate = false;
-    errors.barcodeExists = false;
-  }
-};
-
-// Verificar si el código de barras ya existe
-const checkBarcodeExists = async () => {
-  if (formItem.barcode && (!selectedItem.value || formItem.barcode !== selectedItem.value.barcode)) {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/${user.value.role}/articles/check-barcode/${formItem.barcode}`
-      );
-      errors.barcodeExists = response.data.exists;
-    } catch (error) {
-      console.error("Error al verificar código de barras:", error);
-    }
-  } else {
     errors.barcodeExists = false;
   }
 };
@@ -492,7 +459,7 @@ const openDeleteModal = (item) => {
 const confirmDeleteItem = async () => {
   if (itemToDelete.value) {
     try {
-      await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemToDelete.value.id}`);
+      await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemToDelete.value.id}`, { withCredentials: true });
       showAlert("Artículo eliminado correctamente", "success");
       await loadInventory(); // Recargar los datos
       refreshDataTable(); // Actualizar DataTable
@@ -519,7 +486,7 @@ const addItem = async () => {
   }
 
   try {
-    await axios.post(`http://localhost:3000/api/${user.value.role}/articles`, formItem);
+    await axios.post(`http://localhost:3000/api/${user.value.role}/articles`, formItem, { withCredentials: true });
     showAlert("Artículo agregado correctamente", "success");
     await loadInventory(); // Recargar los datos
     refreshDataTable(); // Actualizar DataTable
@@ -537,7 +504,7 @@ const updateItem = async () => {
   }
 
   try {
-    await axios.put(`http://localhost:3000/api/${user.value.role}/articles/${selectedItem.value.id}`, formItem);
+    await axios.put(`http://localhost:3000/api/${user.value.role}/articles/${selectedItem.value.id}`, formItem, { withCredentials: true });
     showAlert("Artículo actualizado correctamente", "success");
     await loadInventory(); // Recargar los datos
     refreshDataTable(); // Actualizar DataTable

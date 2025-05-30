@@ -15,15 +15,15 @@
         <!-- Tarjetas de acceso rápido -->
         <div class="row mb-5 g-3">
           <div class="col-12 col-md-6 col-lg-3">
-            <router-link to="/apertura-caja" class="text-decoration-none">
+            <router-link to="/nueva-venta" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10"
                   >
-                    <i class="bi bi-cash-coin text-primary" style="font-size: 2rem"></i>
+                    <i class="bi bi-cart-plus text-primary" style="font-size: 2rem"></i>
                   </div>
-                  <h5 class="card-title">Apertura De Caja</h5>
+                  <h5 class="card-title">Nueva venta</h5>
                 </div>
               </div>
             </router-link>
@@ -189,11 +189,14 @@ onMounted(async () => {
   const userStore = useUserStore();
 
   if (userStore.isAuthenticated) {
+    console.log("Usuario autenticado:", userStore.user.username);
+    
     user.value = userStore.user;
 
     try {
       const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`, { withCredentials: true });
       const sales = response.data.data;
+      
       totalSales.value = calculateTotalSales(sales);
       totalTransactions.value = calculateTotalTransactions(sales);
     } catch (error) {
