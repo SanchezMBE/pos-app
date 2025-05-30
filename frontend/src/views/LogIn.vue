@@ -110,6 +110,7 @@ const showPassword = ref(false);
 const rememberMe = ref(false);
 const isLoading = ref(false);
 const router = useRouter();
+import { useUserStore } from "@/stores/user";
 
 const login = async () => {
   if (!username.value || !password.value) {
@@ -120,28 +121,12 @@ const login = async () => {
   isLoading.value = true;
 
   try {
-    // Realizar petición al backend para autenticar con la base de datos local
-    const response = await axios.post("http://localhost:3000/api/login", {
-      username: username.value,
-      password: password.value
-    });
+    const userStore = useUserStore();
+    await userStore.login(username.value, password.value);  
 
-    // Si la autenticación es exitosa, guardar datos del usuario en localStorage
-    if (response.data) {
-      const token = response.data.data.token;
-      const user = response.data.data.user;
-
-      // Guardar información del usuario y el token
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
+    if (userStore.isAuthenticated) {
       console.log("Registro exitoso");
-      // Redirigir según el rol del usuario (?)
-      if (user.role === "admin") {
-        router.push("/pos");
-      } else {
-        router.push("/pos");
-      }
+      router.push("/pos");
     }
   } catch (error) {
     // Manejar diferentes tipos de errores
@@ -175,34 +160,6 @@ const login = async () => {
 import { onMounted } from "vue";
 
 onMounted(() => {
-  // // Verificar si ya hay una sesión activa
-  // const authToken = localStorage.getItem("authToken");
-  // const user = localStorage.getItem("user");
-
-  // if (authToken && user) {
-  //   // Configurar token para peticiones
-  //   axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
-
-  //   // Verificar si el token sigue siendo válido (opcional)
-  //   axios
-  //     .get("http://localhost:3000/api/login")
-  //     .then(() => {
-  //       const userData = JSON.parse(user);
-  //       // Redirigir según el rol del usuario
-  //       if (userData.role === "admin") {
-  //         router.push("/admin");
-  //       } else {
-  //         router.push("/pos");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // Si el token no es válido, limpiar localStorage
-  //       localStorage.removeItem("authToken");
-  //       localStorage.removeItem("user");
-  //       console.log("Sesión expirada o inválida");
-  //     });
-  // }
-
   // Cargar Bootstrap Icons
   const bootstrapIcons = document.createElement("link");
   bootstrapIcons.rel = "stylesheet";

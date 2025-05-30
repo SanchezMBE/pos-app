@@ -176,6 +176,7 @@
 import { ref, onMounted } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
 
 const user = ref({
   username: "Usuario",
@@ -185,26 +186,21 @@ const totalSales = ref(0);
 const totalTransactions = ref(0);
 
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser && storedToken) {
-    try {
-      user.value = JSON.parse(storedUser);
-      // Configurar token para futuras peticiones
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  if (userStore.isAuthenticated) {
+    user.value = userStore.user;
 
     try {
-      const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`);
+      const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`, { withCredentials: true });
       const sales = response.data.data;
       totalSales.value = calculateTotalSales(sales);
       totalTransactions.value = calculateTotalTransactions(sales);
     } catch (error) {
       console.error("Error al cargar ventas:", error);
     }
+  } else {
+    showAlert("Inicie sesión para continuar", "warning");
   }
 });
 

@@ -262,6 +262,7 @@ import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import { Modal } from "bootstrap";
+import { useUserStore } from "@/stores/user";
 
 DataTable.use(DataTablesCore);
 
@@ -392,7 +393,7 @@ const closeAlert = () => {
 
 const loadInventory = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`);
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`, { withCredentials: true });
     data.value = response.data.data;
   } catch (error) {
     console.error("Error al cargar artículos:", error);
@@ -402,7 +403,7 @@ const loadInventory = async () => {
 
 const loadCategories = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/categories`);
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/categories`, { withCredentials: true });
     categories.value = response.data.data;
   } catch (error) {
     console.error("Error al cargar categorías:", error);
@@ -514,16 +515,10 @@ const updateItem = async () => {
 };
 
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser && storedToken) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  if (userStore.isAuthenticated) {
+    user.value = userStore.user;
 
     // Inicializar los modales de Bootstrap
     productModal = new Modal(modalElement.value);

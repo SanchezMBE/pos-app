@@ -262,6 +262,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
 
 // Simulación de base de datos con usuarios y correos existentes
 const existingEmails = ["tienda@ejemplo.com", "abarrotes@ejemplo.com", "mini@ejemplo.com"];
@@ -448,34 +449,19 @@ const register = async () => {
   };
 
   try {
-    const response = await axios.post("http://localhost:3000/api/signup", data);
-    console.log(response);
+    const userStore = useUserStore();
+    await userStore.signup(data);
 
-    if (response.data) {
-      const token = response.data.data.token;
-      const user = response.data.data.user;
-      console.log(token, user);
+    console.log("userStore", userStore);
     
-      // Guardar información del usuario y el token
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(user));
 
+    if (userStore.isAuthenticated) {
       console.log("Registro exitoso");
-      // Redirigir según el rol del usuario (?)
-      if (user.role === "admin") {
-        router.push("/pos");
-      } else {
-        router.push("/pos");
-      }
+      router.push("/pos");
     }
   } catch (error) {
-    switch (error.response.status) {
-      case 400:
-        errMsg.value = "Credenciales inválidas";
-        break;
-      default:
-        errMsg.value = "Error en el servidor. Inténtalo más tarde";
-    }
+    console.log("Error al registrar:", error);
+    
   } finally {
     isLoading.value = false;
   }
