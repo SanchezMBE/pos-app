@@ -177,6 +177,7 @@ import { ref, onMounted } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
 import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 const user = ref({
   username: "Usuario",
@@ -203,7 +204,7 @@ onMounted(async () => {
       console.error("Error al cargar ventas:", error);
     }
   } else {
-    showAlert("Inicie sesión para continuar", "warning");
+    router.push("/login");
   }
 });
 

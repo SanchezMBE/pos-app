@@ -174,6 +174,8 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import Sidebar from "@/components/Sidebar.vue";
 import { Modal } from "bootstrap";
+import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 const user = ref({
   username: "Usuario",
@@ -197,22 +199,18 @@ const pagoModal = ref(null);
 let pagoModalInstance = null;
 
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser && storedToken) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+  if (userStore.isAuthenticated) {
+    user.value = userStore.user;
 
     // Inicializar el modal
     pagoModalInstance = new Modal(pagoModal.value);
 
     // Cargar inventario y datos del negocio
     await Promise.all([cargarInventario()]);
+  } else {
+    router.push("/login");
   }
 });
 
@@ -240,7 +238,7 @@ const montoRecibido = ref(0);
 
 const cargarInventario = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`);
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`, { withCredentials: true });
     inventario.value = response.data.data;
   } catch (error) {
     console.error("Error al cargar inventario:", error);
@@ -250,7 +248,7 @@ const cargarInventario = async () => {
 // Verificar si hay un corte de caja abierto
 const verificarCorteCaja = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/cashaudit/open`);
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/cashaudit/open`, { withCredentials: true });
     cashAudit.value = response.data;
 
     if (!cashAudit.value.isOpen) {
@@ -447,13 +445,9 @@ const finalizarVenta = async () => {
     };
 
     // Crear la venta principal
-    const saleResponse = await axios.post(`http://localhost:3000/api/${user.value.role}/sales`, saleData);
-    const saleId = saleResponse.data.data.id;
+    await axios.post(`http://localhost:3000/api/${user.value.role}/sales`, saleData, { withCredentials: true });
 
     pagoModalInstance.hide();
-
-    // Mensaje de éxito
-    console.log(`Venta finalizada con éxito. ID de venta: ${saleId}`);
 
     // Limpiar para una nueva venta
     cantidad.value = 1;
@@ -462,8 +456,8 @@ const finalizarVenta = async () => {
     articulosVenta.value = [];
     stockMsg.value = "";
     montoRecibido.value = 0;
-  } catch (error) {
-    console.error("Error al procesar venta:", error);
+  } catch {
+    console.error("Error al procesar venta");
     alert("Hubo un error al procesar la venta. Intente nuevamente.");
   }
 };

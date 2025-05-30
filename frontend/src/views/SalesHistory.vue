@@ -74,6 +74,8 @@ import axios from "axios";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 DataTable.use(DataTablesCore);
 
@@ -109,15 +111,13 @@ const closeAlert = () => {
 
 const loadSales = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`);
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/sales`, { withCredentials: true });
     data.value = response.data.data;
     // Formatear la fecha y hora
     data.value.forEach((item) => {
-      item.sale_date = new Date(
-        item.sale_date
-      ).toLocaleString("es-MX", {
+      item.sale_date = new Date(item.sale_date).toLocaleString("es-MX", {
         timeZone: "America/Mexico_City",
-        hour12: false,
+        hour12: false
       });
     });
   } catch (error) {
@@ -127,24 +127,15 @@ const loadSales = async () => {
 };
 
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
-  }
+  if (userStore.isAuthenticated) {
+    user.value = userStore.user;
 
-  if (storedToken) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+    // Cargar ventas
+    await loadSales();
   } else {
-    showAlert("Inicie sesión para continuar", "warning");
+    router.push("/login");
   }
-
-  // Cargar ventas
-  await loadSales();
 });
 </script>

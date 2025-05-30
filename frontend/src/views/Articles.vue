@@ -252,6 +252,7 @@ import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import { Modal } from "bootstrap";
 import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 DataTable.use(DataTablesCore);
 
@@ -529,7 +530,7 @@ onMounted(async () => {
     await loadCategories();
     await loadInventory();
   } else {
-    showAlert("Inicie sesión para continuar", "warning");
+    router.push("/login");
   }
 });
 </script>
