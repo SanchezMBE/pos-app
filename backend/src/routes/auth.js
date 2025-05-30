@@ -1,16 +1,16 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { authLimiter, authMeLimiter } from "../middlewares/rateLimiters.js";
 
 const router = Router();
 
-router.post("/signup", AuthController.signup);
+router.post("/signup", authLimiter, AuthController.signup);
 
-router.post("/login", AuthController.login);
+router.post("/login", authLimiter, AuthController.login);
 
-// router.post("/request-verification", AuthController.requestVerification)
+router.post("/logout", authLimiter, AuthController.logout);
 
-// router.post("/verify-code", AuthController.verifyCode);
-
-// router.post("/reset-password", AuthController.resetPassword)
+router.get("/me", authMiddleware, authMeLimiter, AuthController.getMe);
 
 export default router;

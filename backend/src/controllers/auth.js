@@ -3,11 +3,6 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.js";
 import { Business } from "../models/business.js";
 
-import { createVerificationToken } from "../utils/createVerificationToken.js";
-import { generateVerificationCode } from "../utils/generateVerificationCode.js";
-import sendMail from "../utils/sendMail.js";
-import { verifyCode } from "../utils/veryCode.js";
-
 export class AuthController {
   static async signup(req, res) {
     try {
@@ -66,24 +61,30 @@ export class AuthController {
         }
       );
 
-      res.status(201).json({
-        success: true,
-        data: {
-          business: {
-            name: businessResult.name,
-            address: businessResult.address,
-            phone: businessResult.phone,
-            email: businessResult.email
+      res
+        .cookie("access_token", token, {
+          httpOnly: true, // the cookie is not accessible via JavaScript
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 60 // 1 hour
+        })
+        .status(201)
+        .json({
+          success: true,
+          data: {
+            business: {
+              name: businessResult.name,
+              address: businessResult.address,
+              phone: businessResult.phone,
+              email: businessResult.email
+            },
+            user: {
+              username: userResult.username,
+              full_name: userResult.full_name,
+              role: userResult.role
+            }
           },
-          user: {
-            username: userResult.username,
-            full_name: userResult.full_name,
-            role: userResult.role
-          },
-          token
-        },
-        message: "Negocio y usuario creados correctamente"
-      });
+          message: "Negocio y usuario creados correctamente"
+        });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -119,15 +120,37 @@ export class AuthController {
         expiresIn: "1h"
       });
 
-      res.json({
+      res
+        .cookie("access_token", token, {
+          httpOnly: true, // the cookie is not accessible via JavaScript
+          sameSite: "lax",
+          maxAge: 1000 * 60 * 60 // 1 hour
+        })
+        .json({
+          success: true,
+          data: {
+            user: {
+              username: user.username,
+              full_name: user.full_name,
+              role: user.role
+            }
+          }
+        });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
+
+  static async logout(req, res) {
+    try {
+      // Invalidate the token by not returning it or by using a blacklist strategy
+      // Here we simply send a success response
+      res.clearCookie("access_token").json({
         success: true,
-        data: {
-          user: {
-            username: user.username,
-            role: user.role
-          },
-          token
-        }
+        message: "Sesión cerrada correctamente"
       });
     } catch (error) {
       res.status(500).json({
@@ -137,92 +160,32 @@ export class AuthController {
     }
   }
 
-  static async requestVerification(req, res) {
+  static async getMe(req, res) {
     try {
-      const { username } = req.body;
+      const user = req.user; // User is set by the authentication middleware
 
-      const userData = await User.findByName({ username });
-
-      const email = userData.email;
-      if (!email) {
-        return res.status(404).json({ message: "No se encontró el correo electrónico" });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          error: "No autenticado"
+        });
       }
-
-      const verificationCode = generateVerificationCode();
-      const token = createVerificationToken(userData.id, verificationCode, userData.business_id);
-
-      sendMail({
-        to: email,
-        subject: "Recuperación de contraseña",
-        text: `Hola ${userData.full_name}, el código de recuperación es: ${verificationCode}`
-      });
-
-      // Devolvemos el token al cliente (pero NO el código)
-      res.json({
-        success: true,
-        message: "Código enviado correctamente",
-        token // Este token será necesario para verificar el código posteriormente
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-        message: "Error al enviar el código de verificación",
-        error: error.message
-      });
-    }
-  }
-
-  static async verifyCode(req, res) {
-    const { token, code } = req.body;
-
-    if (!token || !code) {
-      return res.status(400).json({ error: "Token y código son requeridos" });
-    }
-
-    // Verificamos el código
-    const verification = verifyCode(token, code);
-
-    if (!verification) {
-      return res.status(400).json({ error: "Código inválido o expirado" });
-    }
-
-    // El código es válido, tomamos alguna acción según el caso de uso
-    // Por ejemplo, permitir el reset de contraseña
-
-    res.json({
-      success: true,
-      message: "Verificación exitosa",
-      token // Este token será necesario para resetear la contraseña
-    });
-  }
-
-  static async resetPassword(req, res) {
-    const { token, newPassword } = req.body;
-
-    if (!token || !newPassword) {
-      return res.status(400).json({ error: "Token y nueva contraseña son requeridos" });
-    }
-
-    try {
-      // Verificamos el token
-      const verification = verifyCode(token);
-
-      if (!verification) {
-        return res.status(400).json({ error: "Token inválido o expirado" });
-      }
-
-      // Actualizamos la contraseña del usuario
-      const hashedPassword = crypto.createHash("sha256").update(newPassword).digest("hex");
-      await User.updatePassword(verification.userId, hashedPassword, verification.businessId);
 
       res.json({
         success: true,
-        message: "Contraseña actualizada correctamente"
+        data: {
+          user: {
+            id: user.id,
+            username: user.username,
+            full_name: user.full_name,
+            role: user.role,
+            business_id: user.business_id
+          }
+        }
       });
     } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-        message: "Error al actualizar la contraseña",
+      res.status(500).json({
+        success: false,
         error: error.message
       });
     }
