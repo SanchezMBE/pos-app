@@ -35,7 +35,9 @@
                 <div>
                   <strong>{{ article.description }}</strong> - ${{ article.price.toFixed(2) }}
                 </div>
-                <small class="text-muted">{{ article.barcode }} | Código: {{ article.code }} | Stock: {{ article.stock }}</small>
+                <small class="text-muted"
+                  >{{ article.barcode }} | Código: {{ article.code }} | Stock: {{ article.stock }}</small
+                >
               </div>
             </div>
           </div>
@@ -439,7 +441,7 @@ const finalizarVenta = async () => {
         article_id: p.id,
         unit_price: p.price,
         quantity: p.cantidad,
-        total_price: p.price * p.cantidad,
+        total_price: p.price * p.cantidad
       })),
       total: total.value
     };

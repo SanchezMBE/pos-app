@@ -15,12 +15,11 @@
         <i class="bi bi-cart me-2"></i> Nueva Venta
       </router-link>
 
-      
       <template v-if="user.role === 'admin'">
         <router-link to="/inventario" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
           <i class="bi bi-box-seam me-2"></i> Inventario
         </router-link>
-        
+
         <router-link
           to="/historial-ventas"
           class="list-group-item list-group-item-action bg-dark text-white border-0 py-3"
@@ -28,16 +27,12 @@
           <i class="bi bi-clock-history me-2"></i> Historial de Ventas
         </router-link>
 
-        <router-link to="/registros-turnos" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-receipt-cutoff me-2"></i> Registro de Turnos
+        <router-link to="/usuarios" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
+          <i class="bi bi-people me-2"></i> Cajeros
         </router-link>
 
-        <!-- <router-link to="/reportes" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-graph-up me-2"></i> Reportes
-        </router-link> -->
-
-        <router-link to="/usuarios" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
-          <i class="bi bi-people me-2"></i> Usuarios
+        <router-link to="/perfil" class="list-group-item list-group-item-action bg-dark text-white border-0 py-3">
+          <i class="bi bi-person-circle me-2"></i> Mi Perfil
         </router-link>
       </template>
     </div>
@@ -85,7 +80,6 @@ const handleSignOut = () => {
 </script>
 
 <style scoped>
-
 #sidebar-wrapper {
   width: 250px;
   min-height: 100vh;

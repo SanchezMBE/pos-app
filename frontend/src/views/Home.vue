@@ -60,15 +60,15 @@
           </div>
 
           <div class="col-12 col-md-6 col-lg-3" v-if="user.role === 'admin'">
-            <router-link to="/corte-caja" class="text-decoration-none">
+            <router-link to="/usuarios" class="text-decoration-none">
               <div class="card action-card h-100 shadow-sm">
                 <div class="card-body text-center p-4">
                   <div
                     class="icon-wrapper mb-3 mx-auto d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10"
                   >
-                    <i class="bi bi-receipt-cutoff text-warning" style="font-size: 2rem"></i>
+                    <i class="bi bi-shop text-warning" style="font-size: 2rem"></i>
                   </div>
-                  <h5 class="card-title">Corte de Caja</h5>
+                  <h5 class="card-title">Administrar Cajeros</h5>
                 </div>
               </div>
             </router-link>

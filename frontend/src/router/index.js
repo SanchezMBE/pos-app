@@ -14,7 +14,7 @@ const router = createRouter({
     { path: "/historial-ventas", component: () => import("../views/SalesHistory.vue"), meta: { requiresAuth: true } },
     { path: "/registros-turnos", component: () => import("../views/ShiftRecord.vue"), meta: { requiresAuth: true } },
     { path: "/corte-caja", component: () => import("../views/CloseShift.vue"), meta: { requiresAuth: true } },
-    { path: "/apertura-caja", component: () => import("../views/OpenShift.vue"), meta: { requiresAuth: true } },
+    { path: "/perfil", component: () => import("../views/Perfil.vue"), meta: { requiresAuth: true } },
     { path: "/usuarios", component: () => import("../views/Users.vue"), meta: { requiresAuth: true } }
   ]
 });

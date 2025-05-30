@@ -17,5 +17,9 @@
     "**/*.js": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "datatables.net-buttons": "^3.2.3",
+    "datatables.net-buttons-bs5": "^3.2.3"
   }
 }
