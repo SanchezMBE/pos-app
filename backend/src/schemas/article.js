@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const articleSchema = z.object({
+// Esquema base completo
+const baseArticleSchema = z.object({
   category_id: z.number().int().positive({
     message: "Categoría id debe ser un número entero positivo"
   }),
@@ -27,7 +28,9 @@ export const articleSchema = z.object({
     .optional(),
   barcode: z
     .string()
-    .min(1, { message: "El código de barras no puede ser nulo" })
+    .min(1, {
+      message: "El código de barras no puede ser nulo"
+    })
     .regex(/^[0-9]+$/, {
       message: "Código de barras debe ser un número entero positivo"
     })
@@ -55,3 +58,13 @@ export const articleSchema = z.object({
     .nullable()
     .optional()
 });
+
+// Función para generar variantes del esquema
+export const getArticleSchema = ({ partial = false, fields = null } = {}) => {
+  let schema = baseArticleSchema;
+
+  if (fields) schema = schema.pick(fields);
+  if (partial) schema = schema.partial();
+
+  return schema;
+};

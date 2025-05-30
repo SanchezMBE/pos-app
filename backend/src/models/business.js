@@ -8,7 +8,7 @@ export class Business {
       if (businesses.length === 0) return null;
       return businesses[0];
     } catch (error) {
-      throw new Error(`Error fetching business: ${error.message}`);
+      throw new Error(`Error al obtener el negocio: ${error.message}`);
     }
   }
 
@@ -32,13 +32,29 @@ export class Business {
           throw new Error("Barcode already exists");
         }
       }
-      throw new Error(`Error creating business: ${error.message}`);
+      throw new Error(`Error al crear el negocio: ${error.message}`);
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
-  static async update({ id, businessData, businessId }) {
-    // TODO
+  static async update({ businessId, businessData }) {
+    try {
+      const { name, address, phone, email } = businessData;
+
+      const [result] = await db.query(
+        `UPDATE business 
+         SET name = ?, address = ?, phone = ?, email = ? 
+         WHERE id = ?`,
+        [name, address, phone, email, businessId]
+      );
+
+      if (result.affectedRows === 0) {
+        throw new Error("No se encontró el negocio para actualizar");
+      }
+
+      return { id: businessId, ...businessData };
+    } catch (error) {
+      throw new Error(`Error actualizar negocio: ${error.message}`);
+    }
   }
 
   // eslint-disable-next-line no-unused-vars

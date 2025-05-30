@@ -4,11 +4,10 @@ export class User {
   static async findAll({ businessId }) {
     try {
       const [result] = await db.query(
-        `SELECT a.*, c.name as category_name 
-         FROM user a
-         JOIN category c ON a.category_id = c.id
-         WHERE a.business_id = ?
-         ORDER BY a.id DESC`,
+        `SELECT *
+         FROM user
+         WHERE business_id = ? AND role != 'admin'
+         ORDER BY id DESC`,
         [businessId]
       );
       return result;
@@ -64,15 +63,15 @@ export class User {
     }
   }
 
-  static async update({ id, userData, businessId }) {
+  static async update({ id, userData }) {
     try {
-      const { username, password, full_name } = userData;
+      const { username, full_name } = userData;
 
       const [result] = await db.query(
         `UPDATE user 
-         SET username = ?, password = ?, full_name = ?
-         WHERE id = ? AND business_id = ?`,
-        [username, password, full_name, id, businessId]
+         SET username = ?, full_name = ?
+         WHERE id = ?`,
+        [username, full_name, id]
       );
 
       if (result.affectedRows === 0) return null;

@@ -1,11 +1,10 @@
-export const validateMiddleware = (schema) => {
+export const validateMiddleware = (schema, location = "body") => {
   return (req, res, next) => {
     try {
-      // Validate the request body against the schema
-      const result = schema.safeParse(req.body);
+      const dataToValidate = req[location];
+      const result = schema.safeParse(dataToValidate);
 
       if (!result.success) {
-        // Format Zod errors into a more readable format
         const formattedErrors = result.error.errors.map((error) => ({
           path: error.path.join("."),
           message: error.message
@@ -18,8 +17,7 @@ export const validateMiddleware = (schema) => {
         });
       }
 
-      // Validation successful, replace req.body with validated data
-      req.body = result.data;
+      req[location] = result.data;
       next();
     } catch (error) {
       return res.status(500).json({
