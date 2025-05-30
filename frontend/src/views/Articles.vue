@@ -76,16 +76,6 @@
                     {{ item.stock }}
                   </span>
                 </td>
-                <td>
-                  <div class="btn-group btn-group-sm">
-                    <button @click="editItem(item)" class="btn btn-info" title="Editar">
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button @click="openDeleteModal(item)" class="btn btn-danger" title="Eliminar">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </td>
               </tr>
             </template>
           </DataTable>
@@ -260,11 +250,11 @@ import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
-import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import { Modal } from "bootstrap";
 
 DataTable.use(DataTablesCore);
 
+const dtInstance = ref(null);
 const data = ref([]);
 const selectedItem = ref(null);
 const itemToDelete = ref(null);
@@ -279,6 +269,16 @@ const modalElement = ref(null);
 const deleteModalElement = ref(null);
 let productModal = null;
 let deleteModal = null;
+const refreshDataTable = () => {
+  if (dtInstance.value && dtInstance.value.dt) {
+    // Limpiar datos existentes
+    dtInstance.value.dt.clear();
+    // Agregar nuevos datos
+    dtInstance.value.dt.rows.add(data.value);
+    // Re-dibujar la tabla
+    dtInstance.value.dt.draw();
+  }
+};
 
 // Objeto para manejar errores de validación
 const errors = reactive({
@@ -307,15 +307,46 @@ const formItem = reactive({
 });
 
 const columns = [
-  { data: "description" },
-  { data: "category_name" },
-  { data: "code" },
-  { data: "barcode" },
-  { data: "price" },
-  { data: "cost" },
-  { data: "stock" },
-  { data: null, defaultContent: "", orderable: false }
+  { data: "description", title: "Descripción" },
+  { data: "category_name", title: "Categoría" }, // Nota: debes asegurarte que este campo existe en tus datos
+  { data: "code", title: "Código" },
+  { data: "barcode", title: "Código de Barras" },
+  { data: "price", title: "Precio" },
+  { data: "cost", title: "Costo" },
+  { data: "stock", title: "Existencias" },
+  {
+    data: null,
+    title: "Acciones",
+    orderable: false,
+    searchable: false,
+    render: function (data, type, row) {
+      return `
+        <div class="btn-group btn-group-sm d-flex justify-content-center gap-2">
+          <button onclick="editItem(${row.id})" class="btn btn-info" title="Editar">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button onclick="openDeleteModal(${row.id})" class="btn btn-danger" title="Eliminar">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      `;
+    }
+  }
 ];
+
+window.editItem = (id) => {
+  const item = data.value.find((i) => i.id === id);
+  if (item) {
+    editItem(item);
+  }
+};
+
+window.openDeleteModal = (id) => {
+  const item = data.value.find((i) => i.id === id);
+  if (item) {
+    openDeleteModal(item);
+  }
+};
 
 // Validar que el código no esté duplicado
 const validateCode = async () => {
@@ -462,7 +493,8 @@ const confirmDeleteItem = async () => {
     try {
       await axios.delete(`http://localhost:3000/api/${user.value.role}/articles/${itemToDelete.value.id}`);
       showAlert("Artículo eliminado correctamente", "success");
-      await loadInventory(); // Recargar la tabla
+      await loadInventory(); // Recargar los datos
+      refreshDataTable(); // Actualizar DataTable
       deleteModal.hide(); // Cerrar modal de confirmación
     } catch (error) {
       console.error("Error al eliminar artículo:", error);
@@ -488,7 +520,8 @@ const addItem = async () => {
   try {
     await axios.post(`http://localhost:3000/api/${user.value.role}/articles`, formItem);
     showAlert("Artículo agregado correctamente", "success");
-    await loadInventory(); // Recargar la tabla
+    await loadInventory(); // Recargar los datos
+    refreshDataTable(); // Actualizar DataTable
     productModal.hide(); // Cerrar modal
   } catch (error) {
     console.error("Error al agregar artículo:", error);
@@ -505,7 +538,8 @@ const updateItem = async () => {
   try {
     await axios.put(`http://localhost:3000/api/${user.value.role}/articles/${selectedItem.value.id}`, formItem);
     showAlert("Artículo actualizado correctamente", "success");
-    await loadInventory(); // Recargar la tabla
+    await loadInventory(); // Recargar los datos
+    refreshDataTable(); // Actualizar DataTable
     productModal.hide(); // Cerrar modal
   } catch (error) {
     console.error("Error al actualizar artículo:", error);
