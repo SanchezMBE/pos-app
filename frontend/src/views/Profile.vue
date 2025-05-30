@@ -202,6 +202,9 @@ import { ref, computed, onMounted } from "vue";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const user = ref({
   username: "Usuario",
@@ -264,10 +267,6 @@ const hideAlert = () => {
 const validatePassword = (password) => {
   if (!password) return true; // Opcional
 
-  if (password.length > 8) {
-    return "La contraseña debe tener máximo 8 caracteres";
-  }
-
   const hasNumber = /\d/.test(password);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
@@ -307,39 +306,6 @@ const validatePhone = (phone) => {
   return null;
 };
 
-const validateUsername = async (username, currentUsername) => {
-  if (username === currentUsername) return null;
-
-  try {
-    const response = await axios.get(`/api/users/check-username/${username}`);
-    if (response.data.exists) {
-      return "Este nombre de usuario ya existe";
-    }
-  } catch (error) {
-    console.error("Error validando usuario:", error);
-  }
-
-  return null;
-};
-
-const validateBusinessEmail = async (email, currentEmail) => {
-  if (email === currentEmail) return null;
-
-  const emailError = validateEmail(email);
-  if (emailError) return emailError;
-
-  try {
-    const response = await axios.get(`/api/business/check-email/${email}`);
-    if (response.data.exists) {
-      return "Este correo electrónico ya está registrado";
-    }
-  } catch (error) {
-    console.error("Error validando correo del negocio:", error);
-  }
-
-  return null;
-};
-
 // Funciones de datos personales
 const toggleEditPersonal = () => {
   editingPersonal.value = true;
@@ -370,13 +336,7 @@ const updatePersonalData = async () => {
       errors.value.confirmPassword = "Las contraseñas no coinciden";
     }
   }
-
-  // Validar usuario
-  const usernameError = await validateUsername(personalData.value.username, originalPersonalData.value.username);
-  if (usernameError) {
-    errors.value.username = usernameError;
-  }
-
+  
   if (Object.keys(errors.value).length > 0) {
     return;
   }
@@ -393,20 +353,18 @@ const updatePersonalData = async () => {
       updateData.password = personalData.value.password;
     }
 
-    await axios.put("/api/users/profile", updateData);
-
-    // Actualizar datos del usuario en localStorage
-    const updatedUser = { ...user.value };
-    updatedUser.username = personalData.value.username;
-    updatedUser.full_name = personalData.value.full_name;
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    user.value = updatedUser;
-
+    const response = await axios.put("http://localhost:3000/api/admin/profile/me", updateData, { withCredentials: true });
+     console.log("Datos personales actualizados:", response.data.data.user);
+    // Actualizar datos del usuario en el store
+    const userStore = useUserStore();
+    userStore.user = response.data.data.user;
+    user.value = response.data.data.user;
+    
     editingPersonal.value = false;
     showAlert("success", "Datos personales actualizados correctamente");
   } catch (error) {
-    console.error("Error actualizando datos personales:", error);
-    showAlert("danger", "Error al actualizar los datos personales");
+    // console.error("Error actualizando datos personales:", error);
+    // showAlert("danger", "Error al actualizar los datos personales");
   } finally {
     loadingPersonal.value = false;
   }
@@ -432,12 +390,13 @@ const updateBusinessData = async () => {
   const phoneError = validatePhone(businessData.value.phone);
   if (phoneError) {
     errors.value.phone = phoneError;
+    return;
   }
 
-  // Validar correo del negocio
-  const emailError = await validateBusinessEmail(businessData.value.email, originalBusinessData.value.email);
+  const emailError = validateEmail(businessData.value.email);
   if (emailError) {
     errors.value.email = emailError;
+    return;
   }
 
   if (Object.keys(errors.value).length > 0) {
@@ -447,7 +406,11 @@ const updateBusinessData = async () => {
   loadingBusiness.value = true;
 
   try {
-    await axios.put("/api/business/profile", businessData.value);
+    const response = await axios.put("http://localhost:3000/api/admin/profile/business", businessData.value, { withCredentials: true });
+    const userStore = useUserStore();
+    // Actualizar datos del negocio en el store
+    userStore.business = response.data.data.business;
+    
 
     editingBusiness.value = false;
     showAlert("success", "Datos del negocio actualizados correctamente");
@@ -459,49 +422,17 @@ const updateBusinessData = async () => {
   }
 };
 
-// Cargar datos iniciales
-const loadProfileData = async () => {
-  try {
-    // Cargar datos del usuario
-    const userResponse = await axios.get("/api/users/profile");
-    personalData.value = {
-      full_name: userResponse.data.full_name,
-      username: userResponse.data.username,
-      password: ""
-    };
-
-    // Cargar datos del negocio
-    const businessResponse = await axios.get("/api/business/profile");
-    businessData.value = {
-      name: businessResponse.data.name || "",
-      address: businessResponse.data.address || "",
-      phone: businessResponse.data.phone || "",
-      email: businessResponse.data.email || ""
-    };
-  } catch (error) {
-    console.error("Error cargando datos del perfil:", error);
-    showAlert("danger", "Error al cargar los datos del perfil");
-  }
-};
-
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
+  if (userStore.isAuthenticated) {
+    personalData.value = userStore.user;
+    businessData.value = userStore.business;
+    user.value = userStore.user;
+  } else {
+    // Redirigir al login si no está autenticado
+    router.push("/login");
   }
-
-  if (storedToken) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-  }
-
-  // Cargar datos del perfil
-  await loadProfileData();
 });
 </script>
 

@@ -277,6 +277,9 @@ import { ref, computed, onMounted } from "vue";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Sidebar from "@/components/Sidebar.vue";
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const user = ref({
   username: "Usuario",
@@ -284,23 +287,16 @@ const user = ref({
 });
 
 onMounted(async () => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("authToken");
+  const userStore = useUserStore();
 
-  if (storedUser) {
-    try {
-      user.value = JSON.parse(storedUser);
-    } catch (e) {
-      console.error("Error al parsear datos del usuario:", e);
-    }
+  if (userStore.isAuthenticated) {
+    user.value = userStore.user;
+
+    // Cargar cajeros desde la base de datos
+    await cargarCajeros();
+  } else {
+    router.push("/login");
   }
-
-  if (storedToken) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-  }
-
-  // Cargar cajeros desde la base de datos
-  await cargarCajeros();
 });
 
 // Estados
@@ -354,14 +350,6 @@ const validarFormulario = (datos, esEdicion = false) => {
 
   if (!datos.usuario.trim()) {
     errores.usuario = "El usuario es obligatorio";
-  } else {
-    // Verificar que el usuario no exista (excepto en edición del mismo usuario)
-    const usuarioExiste = cajeros.value.some(
-      (c) => c.usuario.toLowerCase() === datos.usuario.toLowerCase() && (!esEdicion || c.id !== datos.id)
-    );
-    if (usuarioExiste) {
-      errores.usuario = "Este usuario ya existe";
-    }
   }
 
   // En edición, la contraseña es opcional
@@ -387,11 +375,13 @@ const cargarCajeros = async () => {
   try {
     cargando.value = true;
     error.value = "";
-    const response = await axios.get("/api/cashiers");
-    cajeros.value = response.data.data || [];
+    const response = await axios.get("http://localhost:3000/api/admin/users", { withCredentials: true });
+
+    cajeros.value = response.data.data.users || [];
   } catch (err) {
     console.error("Error al cargar cajeros:", err);
     error.value = "Error al cargar los cajeros";
+
     // Mostrar mensaje de error al usuario
     if (err.response?.data?.message) {
       alert(`Error: ${err.response.data.message}`);
@@ -406,11 +396,18 @@ const cargarCajeros = async () => {
 const crearCajero = async (datosCajero) => {
   try {
     cargando.value = true;
-    const response = await axios.post("/api/cashiers", {
-      full_name: datosCajero.nombreCompleto,
-      username: datosCajero.usuario,
-      password: datosCajero.contrasena
-    });
+    const response = await axios.post(
+      "http://localhost:3000/api/admin/users",
+      {
+        full_name: datosCajero.nombreCompleto,
+        username: datosCajero.usuario,
+        password: datosCajero.contrasena
+      },
+      { withCredentials: true }
+    );
+
+    console.log("Respuesta de creación de cajero:", response.data.data);
+    
 
     // Recargar la lista de cajeros
     await cargarCajeros();
@@ -460,8 +457,8 @@ const actualizarCajero = async (id, datosCajero) => {
 const eliminarCajeroAPI = async (id) => {
   try {
     cargando.value = true;
-    await axios.delete(`/api/cashiers/${id}`);
-
+    await axios.delete(`http://localhost:3000/api/admin/users/${id}`, { withCredentials: true });
+    
     // Recargar la lista de cajeros
     await cargarCajeros();
   } catch (err) {

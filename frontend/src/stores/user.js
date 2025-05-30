@@ -18,7 +18,6 @@ export const useUserStore = defineStore("user", {
         if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
         this.user = res.data.data.user;
         this.business = res.data.data.business;
-        console.log("Fetch user successful:", this.user);
       } catch (error) {
         console.log("Fetch user failed:", error);
         this.user = null;
@@ -59,28 +58,20 @@ export const useUserStore = defineStore("user", {
 
         console.log("Signup successful:", this.user);
       } catch (error) {
-        // Handle specific error cases
-        if (error.response && error.response.status === 400) {
-          console.error("Signup failed: Bad Request", error.response.data);
-        } else if (error.response && error.response.status === 409) {
-          console.error("Signup failed: User already exists", error.response.data);
-        } else {
-          console.error("Signup failed:", error);
-        }
         console.error("Signup failed:", error);
         this.user = null;
       }
     },
     async logout() {
       try {
-        const res = await fetch("http://localhost:3000/api/auth/logout", {
-          method: "POST",
-          credentials: "include"
-        });
+        // axios
+        const res = await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
 
-        if (!res.ok) throw new Error("Logout failed");
-
+        if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
         this.user = null;
+        this.business = null;
+
+        console.log("Logout successful:", res.data);
       } catch (error) {
         console.error("Logout failed:", error);
       }

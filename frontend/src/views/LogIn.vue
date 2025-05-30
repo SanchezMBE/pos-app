@@ -118,7 +118,7 @@ const login = async () => {
 
   try {
     const userStore = useUserStore();
-    await userStore.login(username.value, password.value);  
+    await userStore.login(username.value, password.value);
 
     if (userStore.isAuthenticated) {
       console.log("Registro exitoso");

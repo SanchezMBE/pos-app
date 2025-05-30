@@ -49,7 +49,7 @@
           <div class="fw-bold">{{ user.username }}</div>
           <small>{{ user.role === "admin" ? "Administrador" : user.role === "cashier" ? "Cajero" : "" }}</small>
         </div>
-        <button @click="handleSignOut" class="btn btn-sm btn-outline-light">
+        <button @click="handleLogOut" class="btn btn-sm btn-outline-light">
           <i class="bi bi-box-arrow-right"></i>
         </button>
       </div>
@@ -58,6 +58,7 @@
 </template>
 
 <script setup>
+import { useUserStore } from "@/stores/user";
 import { defineProps } from "vue";
 import { useRouter } from "vue-router";
 
@@ -72,9 +73,8 @@ const getUserInitials = () => {
   return name.charAt(0).toUpperCase();
 };
 
-const handleSignOut = () => {
-  localStorage.removeItem("user");
-  localStorage.removeItem("authToken");
+const handleLogOut = () => {
+  useUserStore().logout();
   router.push("/");
 };
 </script>

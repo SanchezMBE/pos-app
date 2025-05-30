@@ -238,7 +238,9 @@ const montoRecibido = ref(0);
 
 const cargarInventario = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`, { withCredentials: true });
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/articles`, {
+      withCredentials: true
+    });
     inventario.value = response.data.data;
   } catch (error) {
     console.error("Error al cargar inventario:", error);
@@ -248,7 +250,9 @@ const cargarInventario = async () => {
 // Verificar si hay un corte de caja abierto
 const verificarCorteCaja = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/cashaudit/open`, { withCredentials: true });
+    const response = await axios.get(`http://localhost:3000/api/${user.value.role}/cashaudit/open`, {
+      withCredentials: true
+    });
     cashAudit.value = response.data;
 
     if (!cashAudit.value.isOpen) {

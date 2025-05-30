@@ -11,8 +11,7 @@ const router = createRouter({
     { path: "/nueva-venta", component: () => import("../views/NewSale.vue"), meta: { requiresAuth: true } },
     { path: "/inventario", component: () => import("../views/Articles.vue"), meta: { requiresAuth: true } },
     { path: "/historial-ventas", component: () => import("../views/SalesHistory.vue"), meta: { requiresAuth: true } },
-    { path: "/registros-turnos", component: () => import("../views/ShiftRecord.vue"), meta: { requiresAuth: true } },
-    { path: "/perfil", component: () => import("../views/Perfil.vue"), meta: { requiresAuth: true } },
+    { path: "/perfil", component: () => import("../views/Profile.vue"), meta: { requiresAuth: true } },
     { path: "/usuarios", component: () => import("../views/Users.vue"), meta: { requiresAuth: true } }
   ]
 });
@@ -26,6 +25,19 @@ router.beforeEach(async (to, from, next) => {
 
       if (!userStore.isAuthenticated) {
         return next("/login");
+      }
+
+      if (userStore.user.role !== "admin" && to.path === "/usuarios") {
+        return next("/pos");
+      }
+      if (userStore.user.role !== "admin" && to.path === "/inventario") {
+        return next("/pos");
+      }
+      if (userStore.user.role !== "admin" && to.path === "/historial-ventas") {
+        return next("/pos");
+      }
+      if (userStore.user.role !== "admin" && to.path === "/perfil") {
+        return next("/pos");
       }
     } catch (error) {}
   }
