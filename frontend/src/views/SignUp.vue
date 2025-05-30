@@ -452,19 +452,8 @@ const register = async () => {
     const userStore = useUserStore();
     await userStore.signup(data);
 
-<<<<<<< HEAD
     console.log("userStore", userStore);
     
-=======
-    if (response.data) {
-      const token = response.data.data.token;
-      const user = response.data.data.user;
-      console.log(token, user);
-
-      // Guardar información del usuario y el token
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(user));
->>>>>>> a7a8cc594a8df6e9cf088616290555065d9df685
 
     if (userStore.isAuthenticated) {
       console.log("Registro exitoso");
